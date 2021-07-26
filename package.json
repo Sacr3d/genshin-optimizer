@@ -46,7 +46,8 @@
     "localization-load": "cd ./localization && npx ts-node ./load.ts",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "check-types": "tsc --noEmit"
   },
   "eslintConfig": {
     "extends": [
