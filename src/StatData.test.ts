@@ -10,7 +10,7 @@ describe(`Testing StatData`, () => {
         def_: 100,
         def: 15
       }, dependencyKeys = ["characterDEF", "def_", "def", "finalDEF"]
-      const { initialStats, formula } = PreprocessFormulas(dependencyKeys, stat)
+      const { initialStats, formula } = PreprocessFormulas(dependencyKeys, stat as any)
       formula(initialStats)
       expect(initialStats).toHaveProperty("finalDEF", 10 * 2 + 15);
     })
@@ -26,7 +26,7 @@ describe(`Testing StatData`, () => {
           },
         },
       }
-      const { initialStats, formula } = PreprocessFormulas(["depVal1", "depval2", "testVal"], stat)
+      const { initialStats, formula } = PreprocessFormulas(["depVal1", "depval2", "testVal"], stat as any)
       formula(initialStats)
       expect(initialStats).toHaveProperty("testVal", 10 + 15 * 2 + 20 * 3);
     })
@@ -42,7 +42,7 @@ describe(`Testing StatData`, () => {
           },
         },
       }
-      const { initialStats, formula } = PreprocessFormulas(["depVal1", "depval2", "testVal"], stat)
+      const { initialStats, formula } = PreprocessFormulas(["depVal1", "depval2", "testVal"], stat as any)
       formula(initialStats)
       expect(initialStats).toHaveProperty("testVal", 10 + 15 * 2 + 20 * 3);
     })
