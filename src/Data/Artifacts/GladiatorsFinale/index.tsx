@@ -28,7 +28,7 @@ const artifact: IArtifactSheet = {
     },
     4: {
       text: "If the wielder of this artifact set uses a Sword, Claymore or Polearm, increases their Normal Attack DMG by 35%.",
-      stats: stats => (stats.weaponType === "sword" || stats.weaponType === "polearm" || stats.weaponType === "claymore") && ({ normal_dmg_: 35 })
+      stats: stats => (stats.weaponType === "sword" || stats.weaponType === "polearm" || stats.weaponType === "claymore") ? { normal_dmg_: 35 } : {}
     }
   }
 }

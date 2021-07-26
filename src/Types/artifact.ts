@@ -1,5 +1,5 @@
-import { ArtifactSetKey, CharacterKey, Rarity, SetNum, SlotKey } from "./consts";
-import { ICalculatedStats } from "./stats";
+import { ArtifactSetKey, CharacterKey, ElementKey, Rarity, ReactionModeKey, SetNum, SlotKey } from "./consts";
+import { BonusStats, BasicStats } from "./stats";
 import IConditional, { IConditionalComplex, IConditionals } from "./IConditional";
 
 export type IArtifactSheets = StrictDict<ArtifactSetKey, IArtifactSheet>
@@ -13,8 +13,8 @@ export interface IArtifactSheet {
   setEffects: Dict<SetNum, SetEffectEntry>
 }
 export interface SetEffectEntry {
-  text: (Displayable | ((stats: ICalculatedStats) => Displayable)),
-  stats?: object | ((stats: ICalculatedStats) => object);//TODO: too strict StatDict | ((arg0: ICalculatedStats) => (StatDict | false))
+  text: (Displayable | ((stats: BasicStats) => Displayable)),
+  stats?: BonusStats | ((stats: BasicStats) => BonusStats);//TODO: too strict StatDict | ((arg0: ICalculatedStats) => (StatDict | false))
   conditional?: (IConditional | IConditionalComplex),
   conditionals?: IConditionals,
 }
@@ -50,9 +50,10 @@ export interface Substat extends IFlexSubstat {
   rolls?: number[],
   efficiency?: number,
 }
-export type StatKey = MainStatKey | SubstatKey | ReactionDMGStatKey | MoveDMGStatKey | ElementalRESStatKey | SpecializedStatKey
+export type StatKey = MainStatKey | SubstatKey | ReactionDMGStatKey | MoveDMGStatKey | ElementalRESStatKey | ElementalEnemyRESStatKey | SpecializedStatKey
 
-type ElementalRESStatKey = "physical_res_" | "anemo_res_" | "geo_res_" | "electro_res_" | "hydro_res_" | "pyro_res_" | "cryo_res_"
+type ElementalRESStatKey = `${ElementKey | "physical"}_res_`
+type ElementalEnemyRESStatKey = `${ElementKey | "physical"}_enemyRes_`
 type ReactionDMGStatKey = "overloaded_dmg_" | "shattered_dmg_" | "electrocharged_dmg_" | "superconduct_dmg_" | "swirl_dmg_" | "vaporize_dmg_" | "melt_dmg_" | "burning_dmg_" | "crystalize_dmg_"
 type MoveDMGStatKey = "normal_dmg_" | "charged_dmg_" | "skill_dmg_" | "burst_dmg_"
 
@@ -60,7 +61,7 @@ export const allMainStatKeys = ["hp", "hp_", "atk", "atk_", "def_", "eleMas", "e
 export const allSubstats = ["hp", "hp_", "atk", "atk_", "def_", "def", "eleMas", "enerRech_", "critRate_", "critDMG_",] as const
 
 // TODO: Check if these actually applies
-type SpecializedStatKey = "charged_critRate_" | "powShield_" | "incHeal_"
+type SpecializedStatKey = "charged_critRate_" | "powShield_" | "incHeal_" | "weakspotDMG_" | "dmg_" | "moveSPD_"
 
 export type MainStatKey = typeof allMainStatKeys[number]
 export type CompressMainStatKey = "hp" | "hp_" | "atk" | "atk_" | "def_" | "eleMas" | "enerRech_" | "critRate_" | "critDMG_" | "physical_dmg_" | "ele_dmg_" | "heal_"

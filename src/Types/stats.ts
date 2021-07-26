@@ -1,10 +1,11 @@
+import { StatKey } from "./artifact";
 import { ArtifactSetKey, ElementKey, HitModeKey, ReactionModeKey, SlotKey } from "./consts";
 
 type Flat = number
 type Percent = number
 
 /** Stats that are not affected by artifacts */
-export interface IBasicStats {
+export interface BasicStats {
   characterKey: string, weaponType: string
   hitMode: HitModeKey, reactionMode: ReactionModeKey | null
   weapon: {
@@ -26,11 +27,16 @@ export interface IBasicStats {
     burst: number;
   }
 
-  mainStatAssumptionLevel: number
-
-}
-export type ICalculatedStats = IBasicStats & Partial<BonusStats> & {
   conditionalValues: ConditionalValues
+  mainStatAssumptionLevel: number
+}
+
+/**
+ * Technically, `ICalculatedStats` still wouldn't have all fields from BonusStats.
+ * Though, all required stats would already be included during dependency calculation
+ * and preprocessing.
+ */
+export type ICalculatedStats = BasicStats & Required<BonusStats> & {
   modifiers?: Modifier
   equippedArtifacts?: StrictDict<SlotKey, string>
   setToSlots: Dict<ArtifactSetKey, SlotKey[]>
@@ -40,24 +46,15 @@ export type ICalculatedStats = IBasicStats & Partial<BonusStats> & {
 
 /** Stats that can be increased from artifacts */
 export type BonusStats = {
-  hp: Flat, hp_: Percent
-  atk: Flat, atk_: Percent
-  def: Flat, def_: Percent
-  dmg_: Percent
-
-  eleMas: Flat, enerRech_: Percent
-
-  critRate_: Percent, critDMG_: Percent, weakspotDMG_: Percent
-
-  heal_: Percent, incHeal_: Percent
-  powShield_: Percent
-  cdRed_: Percent, skillCDRed_: Percent, burstCDRed_: Percent
-  moveSPD_: Percent, atkSPD_: Percent
-  stamina: Flat, staminaDec_: Percent
-  staminaSprintDec_: Percent, staminaGlidingDec_: Percent, staminaChargedDec_: Percent
-
-  amplificative_dmg_: Percent, transformative_dmg_: Percent, crystalize_eleMas_: Percent, crystalize_dmg_: Percent, burning_dmg_: Percent
+  [key in StatKey]?: number
+} & {
+  modifiers?: {
+    [key1: string]: {
+      [key2: string]: number | undefined
+    } | undefined
+  }
 }
+
 
 type ConditionalValues = {
   artifact?: any

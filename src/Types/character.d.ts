@@ -1,6 +1,6 @@
 import { BuildSetting } from "./Build";
 import { CharacterKey, ElementKey, HitModeKey, ReactionModeKey, SlotKey, WeaponKey, WeaponTypeKey } from "./consts";
-import { ICalculatedStats } from "./stats";
+import { BasicStats, ICalculatedStats } from "./stats";
 import IConditional, { IConditionals } from "./IConditional";
 import { IFieldDisplay } from "./IFieldDisplay";
 
@@ -86,12 +86,11 @@ export interface TalentSheetElement {
   stats?: object,
 }
 export interface DocumentSection {
-  canShow?: (stats: ICalculatedStats) => boolean,
-  text?: Displayable | ((stats: ICalculatedStats) => Displayable),
+  canShow?: (stats: BasicStats) => boolean,
+  text?: Displayable | ((stats: BasicStats) => Displayable),
   fields?: Array<IFieldDisplay>,
   conditional?: IConditional,
 }
-
 
 export interface IFormulaSheet {
   normal: ISubFormula
@@ -103,7 +102,7 @@ export interface IFormulaSheet {
 }
 
 interface ISubFormula {
-  [name: string]: (stats: ICalculatedStats) => FormulaItem
+  [name: string]: (stats: BasicStats) => FormulaItem
 }
 
-export type FormulaItem = [(s: any) => number, string[]]
+export type FormulaItem = [(s: ICalculatedStats) => number, string[]]

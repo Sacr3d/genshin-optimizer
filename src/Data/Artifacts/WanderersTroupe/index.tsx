@@ -30,7 +30,7 @@ const artifact: IArtifactSheet = {
     },
     4: {
       text: "Increases Charged Attack DMG by 35% if the character uses a Catalyst or Bow.",
-      stats: stats => (stats.weaponType === "catalyst" || stats.weaponType === "bow") && ({ charged_dmg_: 35 })
+      stats: stats => (stats.weaponType === "catalyst" || stats.weaponType === "bow") ? { charged_dmg_: 35 } : {}
     }
   }
 }

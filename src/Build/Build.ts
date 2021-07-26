@@ -2,7 +2,7 @@ import ElementalData from "../Data/ElementalData"
 import { StatKey, StatDict, IArtifact, SubstatKey } from "../Types/artifact"
 import { ArtifactSetEffects, PrunedArtifactSetEffects, ArtifactsBySlot, SetFilter } from "../Types/Build"
 import { ArtifactSetKey, ElementKey } from "../Types/consts"
-import { ICalculatedStats } from "../Types/stats"
+import { BasicStats, ICalculatedStats } from "../Types/stats"
 
 /**
  * Remove artifacts that can never be used in optimized builds
@@ -195,7 +195,7 @@ function accumulate(slotKey, art: IArtifact, setCount, accu, stats, artifactSetE
   * @param {*} stats - The calculated stats
   * @param {*} overwriteElement - Override the hit to be the character's elemental, that is not part of infusion.
   */
-export function getTalentStatKey(skillKey: string, stats: ICalculatedStats, overwriteElement?: ElementKey | "physical") {
+export function getTalentStatKey(skillKey: string, stats: BasicStats, overwriteElement?: ElementKey | "physical") {
   const { hitMode = "", infusionAura = "", infusionSelf = "", reactionMode = null, characterEle = "anemo", weaponType = "sword" } = stats
   if ((Object.keys(ElementalData) as any).includes(skillKey)) return `${skillKey}_elemental_${hitMode}`//elemental DMG
   if (!overwriteElement && weaponType === "catalyst") overwriteElement = characterEle
