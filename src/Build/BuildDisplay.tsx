@@ -22,7 +22,7 @@ import Stat from '../Stat';
 import { ArtifactsBySlot, Build, BuildSetting } from '../Types/Build';
 import { ICharacter } from '../Types/character';
 import { allSlotKeys, ArtifactSetKey, CharacterKey, SetNum, SlotKey } from '../Types/consts';
-import ICalculatedStats from '../Types/ICalculatedStats';
+import { ICalculatedStats } from '../Types/stats';
 import { IFieldDisplay } from '../Types/IFieldDisplay';
 import { useForceUpdate, usePromise } from '../Util/ReactUtil';
 import { timeStringMs } from '../Util/TimeUtil';

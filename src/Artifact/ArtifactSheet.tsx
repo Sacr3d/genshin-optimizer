@@ -1,6 +1,6 @@
 import { IArtifactSheet, SetEffectEntry, StatArr, StatDict } from "../Types/artifact";
 import { allArtifactSets, allRarities, ArtifactSetKey, Rarity, SetNum, SlotKey } from "../Types/consts";
-import ICalculatedStats from "../Types/ICalculatedStats";
+import { ICalculatedStats } from "../Types/stats";
 import { IConditionals } from "../Types/IConditional";
 import { deepClone, evalIfFunc } from "../Util/Util";
 

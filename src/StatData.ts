@@ -1,6 +1,6 @@
 import { clamp } from "./Util/Util";
 import { hitTypes, hitMoves, hitElements, transformativeReactions, amplifyingReactions, transformativeReactionLevelMultipliers, crystalizeLevelMultipliers } from "./StatConstants"
-import ICalculatedStats from "./Types/ICalculatedStats";
+import { ICalculatedStats } from "./Types/stats";
 
 export interface StatItem {
   name: string, pretty?: string, const?: boolean, default?: any, variant?: string,

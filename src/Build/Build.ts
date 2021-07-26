@@ -2,7 +2,7 @@ import ElementalData from "../Data/ElementalData"
 import { StatKey, StatDict, IArtifact, SubstatKey } from "../Types/artifact"
 import { ArtifactSetEffects, PrunedArtifactSetEffects, ArtifactsBySlot, SetFilter } from "../Types/Build"
 import { ArtifactSetKey, ElementKey } from "../Types/consts"
-import ICalculatedStats from "../Types/ICalculatedStats"
+import { ICalculatedStats } from "../Types/stats"
 
 /**
  * Remove artifacts that can never be used in optimized builds

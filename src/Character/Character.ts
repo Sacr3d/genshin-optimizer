@@ -10,7 +10,7 @@ import { GetDependencies } from "../StatDependency";
 import { IArtifact } from "../Types/artifact";
 import { ICharacter } from "../Types/character";
 import { allElements, ArtifactSetKey, ElementKey, SlotKey } from "../Types/consts";
-import ICalculatedStats from "../Types/ICalculatedStats";
+import { ICalculatedStats } from "../Types/stats";
 import { IFieldDisplay } from "../Types/IFieldDisplay";
 import { deepClone, evalIfFunc } from "../Util/Util";
 import WeaponSheet from "../Weapon/WeaponSheet";

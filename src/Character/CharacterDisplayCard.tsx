@@ -14,7 +14,7 @@ import ElementalData from '../Data/ElementalData';
 import { database } from '../Database/Database';
 import { ICharacter } from '../Types/character';
 import { allCharacterKeys, allSlotKeys, CharacterKey } from '../Types/consts';
-import ICalculatedStats from '../Types/ICalculatedStats';
+import { ICalculatedStats } from '../Types/stats';
 import { usePromise } from '../Util/ReactUtil';
 import { clamp, deepClone } from '../Util/Util';
 import WeaponSheet from '../Weapon/WeaponSheet';

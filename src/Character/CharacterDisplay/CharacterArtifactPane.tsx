@@ -7,7 +7,7 @@ import SetEffectDisplay from '../../Artifact/Component/SetEffectDisplay';
 import { database } from '../../Database/Database';
 import { ICharacter } from '../../Types/character';
 import { allSlotKeys, SlotKey } from '../../Types/consts';
-import ICalculatedStats from '../../Types/ICalculatedStats';
+import { ICalculatedStats } from '../../Types/stats';
 import { useForceUpdate, usePromise } from '../../Util/ReactUtil';
 import WeaponSheet from '../../Weapon/WeaponSheet';
 import Character from "../Character";

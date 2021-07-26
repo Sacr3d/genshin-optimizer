@@ -4,7 +4,7 @@ import Stat from '../Stat';
 import { clampPercent, deepClone, evalIfFunc } from '../Util/Util';
 import { allSubstats, CompressMainStatKey, IArtifact, MainStatKey, StatDict, SubstatKey } from '../Types/artifact';
 import { SlotKey, Rarity, ArtifactSetKey, allSlotKeys, SetNum } from '../Types/consts';
-import ICalculatedStats from '../Types/ICalculatedStats';
+import { ICalculatedStats } from '../Types/stats';
 import { ArtifactSheet } from './ArtifactSheet';
 import Conditional from '../Conditional/Conditional';
 

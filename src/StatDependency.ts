@@ -1,5 +1,5 @@
 import { Formulas, StatData } from "./StatData"
-import { Modifier } from "./Types/ICalculatedStats"
+import { Modifier } from "./Types/stats"
 
 // Generate a statKey dependency, to reduce build generation calculation on a single stat.
 function GetFormulaDependency(formula: (s, c) => number) {

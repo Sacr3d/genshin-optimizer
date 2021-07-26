@@ -1,7 +1,7 @@
 import { ListGroup } from "react-bootstrap"
 import ConditionalDisplay from "./ConditionalDisplay"
 import { DocumentSection } from "../Types/character"
-import ICalculatedStats from "../Types/ICalculatedStats"
+import { ICalculatedStats } from "../Types/stats"
 import { evalIfFunc } from "../Util/Util"
 import FieldDisplay from "./FieldDisplay"
 

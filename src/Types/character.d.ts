@@ -1,6 +1,6 @@
 import { BuildSetting } from "./Build";
 import { CharacterKey, ElementKey, HitModeKey, ReactionModeKey, SlotKey, WeaponKey, WeaponTypeKey } from "./consts";
-import ICalculatedStats from "./ICalculatedStats";
+import { ICalculatedStats } from "./stats";
 import IConditional, { IConditionals } from "./IConditional";
 import { IFieldDisplay } from "./IFieldDisplay";
 

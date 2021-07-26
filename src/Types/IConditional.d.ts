@@ -1,4 +1,4 @@
-import ICalculatedStats from "./ICalculatedStats";
+import { ICalculatedStats } from "./stats";
 import { IFieldDisplay } from "./IFieldDisplay";
 
 export interface IConditionalSimple {

@@ -1,4 +1,4 @@
-import ICalculatedStats from "./ICalculatedStats";
+import { ICalculatedStats } from "./stats";
 
 export interface IFieldDisplay {
   canShow?: (stats: ICalculatedStats) => boolean;

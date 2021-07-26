@@ -1,4 +1,4 @@
-import ICalculatedStats from './Types/ICalculatedStats';
+import { ICalculatedStats } from './Types/stats';
 import { objPathValue } from './Util/Util';
 
 export const formulaImport = import('./Data/formula').then(imp => {

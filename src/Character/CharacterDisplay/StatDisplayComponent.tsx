@@ -5,7 +5,7 @@ import { Card, Col, Row } from "react-bootstrap"
 import StatDisplay from "../../Components/StatDisplay"
 import { ICharacter } from "../../Types/character"
 import CharacterSheet from "../CharacterSheet"
-import ICalculatedStats from "../../Types/ICalculatedStats"
+import { ICalculatedStats } from "../../Types/stats"
 import WeaponSheet from "../../Weapon/WeaponSheet"
 import Character from "../Character"
 

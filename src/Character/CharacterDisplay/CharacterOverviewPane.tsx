@@ -15,7 +15,7 @@ import { ascensionMaxLevel, milestoneLevels } from "../../Data/CharacterData";
 import Stat from "../../Stat";
 import { ICharacter } from "../../Types/character";
 import { allElements, allRarities } from "../../Types/consts";
-import ICalculatedStats from "../../Types/ICalculatedStats";
+import { ICalculatedStats } from "../../Types/stats";
 import { IConditionals } from "../../Types/IConditional";
 import statsToFields from "../../Util/FieldUtil";
 import { usePromise } from "../../Util/ReactUtil";

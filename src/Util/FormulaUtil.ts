@@ -1,7 +1,7 @@
 import { getTalentStatKey } from "../Build/Build"
 import { FormulaItem } from "../Types/character"
 import { ElementKey } from "../Types/consts"
-import ICalculatedStats from "../Types/ICalculatedStats"
+import { ICalculatedStats } from "../Types/stats"
 
 //for basic formula in the format of "percent/100 * s[statKey]"
 export function basicDMGFormula(percent: number, stats: ICalculatedStats, skillKey: string, elemental?: "physical" | ElementKey): FormulaItem {

@@ -9,7 +9,7 @@ import Stat from "../../Stat";
 import { GetDependencies } from "../../StatDependency";
 import { ICharacter } from "../../Types/character";
 import { allElements } from "../../Types/consts";
-import ICalculatedStats from "../../Types/ICalculatedStats";
+import { ICalculatedStats } from "../../Types/stats";
 import { IFieldDisplay } from "../../Types/IFieldDisplay";
 import { usePromise } from "../../Util/ReactUtil";
 import WeaponSheet from "../../Weapon/WeaponSheet";
