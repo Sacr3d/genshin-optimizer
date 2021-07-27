@@ -58,7 +58,7 @@ export class ArtifactSheet {
     Object.entries(setToSlots).forEach(([set, slots]) =>
       Object.entries(sheets[set]?.setEffects ?? {}).forEach(([num, value]) =>
         parseInt(num) <= slots.length && Object.entries(evalIfFunc(value.stats, charStats) ?? {}).forEach(([key, value]) =>
-          artifactSetEffect.push({ key, value })))) // TODO: Update this to include modifiers
+          artifactSetEffect.push({ key, value } as any)))) // TODO: Update this to include modifiers
     return artifactSetEffect
   }
   static setEffects(sheets: StrictDict<ArtifactSetKey, ArtifactSheet>, setToSlots: Dict<ArtifactSetKey, SlotKey[]>) {
