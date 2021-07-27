@@ -14,7 +14,7 @@ export interface IArtifactSheet {
 }
 export interface SetEffectEntry {
   text: (Displayable | ((stats: BasicStats) => Displayable)),
-  stats?: BonusStats | ((stats: BasicStats) => BonusStats);//TODO: too strict StatDict | ((arg0: ICalculatedStats) => (StatDict | false))
+  stats?: BonusStats | ((stats: BasicStats) => BonusStats)
   conditional?: (IConditional | IConditionalComplex),
   conditionals?: IConditionals,
 }
@@ -61,7 +61,7 @@ export const allMainStatKeys = ["hp", "hp_", "atk", "atk_", "def_", "eleMas", "e
 export const allSubstats = ["hp", "hp_", "atk", "atk_", "def_", "def", "eleMas", "enerRech_", "critRate_", "critDMG_",] as const
 
 // TODO: Check if these actually applies
-type SpecializedStatKey = "charged_critRate_" | "powShield_" | "incHeal_" | "weakspotDMG_" | "dmg_" | "moveSPD_"
+type SpecializedStatKey = "normal_critRate_" | "charged_critRate_" | "plunging_dmg_" | "powShield_" | "enemyDEFRed_" | "skillCDRed_" | "incHeal_" | "weakspotDMG_" | "dmg_" | "moveSPD_" | "staminaDec_" | "atkSPD_" | "cdRed_"
 
 export type MainStatKey = typeof allMainStatKeys[number]
 export type CompressMainStatKey = "hp" | "hp_" | "atk" | "atk_" | "def_" | "eleMas" | "enerRech_" | "critRate_" | "critDMG_" | "physical_dmg_" | "ele_dmg_" | "heal_"

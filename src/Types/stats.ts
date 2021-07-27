@@ -48,13 +48,13 @@ export type ICalculatedStats = BasicStats & Required<BonusStats> & {
 export type BonusStats = {
   [key in StatKey]?: number
 } & {
+  infusionSelf?: ElementKey
   modifiers?: {
     [key1: string]: {
       [key2: string]: number | undefined
     } | undefined
   }
 }
-
 
 type ConditionalValues = {
   artifact?: any

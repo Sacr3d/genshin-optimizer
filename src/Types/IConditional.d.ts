@@ -4,7 +4,7 @@ import { IFieldDisplay } from "./IFieldDisplay";
 export interface IConditionalSimple {
   canShow?: (stats: BasicStats) => boolean;
   name: Displayable;
-  stats?: object | ((stats: BasicStats) => BonusStats);
+  stats?: BonusStats | ((stats: BasicStats) => BonusStats);
   fields?: Array<IFieldDisplay>;
   maxStack?: number | ((stats: BasicStats) => number);
   keys?: string[]
