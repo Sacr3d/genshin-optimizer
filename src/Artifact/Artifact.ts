@@ -2,11 +2,13 @@ import { ArtifactMainStatsData, ArtifactSlotsData, ArtifactStarsData, ArtifactSu
 import { ArtifactSubstatLookupTable } from '../Data/ArtifactLookupTable';
 import Stat from '../Stat';
 import { clampPercent, deepClone, evalIfFunc } from '../Util/Util';
-import { allSubstats, CompressMainStatKey, IArtifact, MainStatKey, StatDict, SubstatKey } from '../Types/artifact';
+import { allSubstats, CompressMainStatKey, IArtifact, MainStatKey, SubstatKey } from '../Types/artifact';
 import { SlotKey, Rarity, ArtifactSetKey, allSlotKeys, SetNum } from '../Types/consts';
-import { ICalculatedStats } from '../Types/stats';
+import { BonusStats, ICalculatedStats } from '../Types/stats';
 import { ArtifactSheet } from './ArtifactSheet';
 import Conditional from '../Conditional/Conditional';
+import { ArtifactSetEffects } from '../Types/Build';
+import { mergeStats } from '../Util/StatUtil';
 
 const maxStar: Rarity = 5
 
@@ -20,13 +22,13 @@ export default class Artifact {
   static slotMainStats = (slotKey: SlotKey): readonly MainStatKey[] =>
     ArtifactSlotsData[slotKey].stats
 
-  static setEffectsObjs = (artifactSheets: StrictDict<ArtifactSetKey, ArtifactSheet>, stats: ICalculatedStats): Dict<ArtifactSetKey, Dict<SetNum, StatDict>> => {
-    const result: Dict<ArtifactSetKey, Dict<SetNum, StatDict>> = {};
+  static setEffectsObjs = (artifactSheets: StrictDict<ArtifactSetKey, ArtifactSheet>, stats: ICalculatedStats): ArtifactSetEffects => {
+    const result: ArtifactSetEffects = {};
     //accumulate the non-conditional stats
     Object.entries(artifactSheets).forEach(([setKey, setObj]) => {
-      const setEffect: Dict<SetNum, StatDict> = {}
-      Object.entries(setObj.setEffects).forEach(([setNumKey, setEffectObj]) => {
-        const setStats = evalIfFunc(setEffectObj.stats, stats)
+      const setEffect: Dict<SetNum, BonusStats> = {}
+      Object.entries(setObj.setEffects).forEach(([setNumKey, entry]) => {
+        const setStats = evalIfFunc(entry.stats, stats)
         if (setStats) setEffect[setNumKey] = deepClone(setStats)
       })
       if (Object.keys(setEffect).length > 0)
@@ -37,8 +39,7 @@ export default class Artifact {
       const { stats: condStats } = Conditional.resolve(conditional, stats, conditionalValue)
       result[setKey] ?? (result[setKey] = {})
       result[setKey][setNumKey] ?? (result[setKey][setNumKey] = {})
-      Object.entries(condStats).forEach(([statKey, value]) =>
-        result[setKey][setNumKey][statKey] = (result[setKey][setNumKey][statKey] ?? 0) + value)
+      mergeStats(result[setKey][setNumKey], condStats)
     })
     return result
   }

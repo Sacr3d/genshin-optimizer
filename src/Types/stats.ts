@@ -37,7 +37,6 @@ export interface BasicStats {
  * and preprocessing.
  */
 export type ICalculatedStats = BasicStats & Required<BonusStats> & {
-  modifiers?: Modifier
   equippedArtifacts?: StrictDict<SlotKey, string>
   setToSlots: Dict<ArtifactSetKey, SlotKey[]>
 } & {
@@ -49,11 +48,7 @@ export type BonusStats = {
   [key in StatKey]?: number
 } & {
   infusionSelf?: ElementKey
-  modifiers?: {
-    [key1: string]: {
-      [key2: string]: number | undefined
-    } | undefined
-  }
+  modifiers?: Modifier
 }
 
 type ConditionalValues = {

@@ -55,7 +55,7 @@ describe("Testing Bennett's Formulas (Mabmab#6492)", () => {
     describe("no crit burst hit", () => {
       beforeEach(() => {
         setupStats.hitMode = "hit"
-        setupStats.modifiers = { finalATK: { baseATK: (data.burst.atkRatio[4 - 1] + 20) / 100, } }
+        setupStats.modifiers = { atk: { baseATK: (data.burst.atkRatio[4 - 1] + 20) / 100, } }
       })
       test("hit", () => {
         const stats = computeAllStats(setupStats)
@@ -103,7 +103,7 @@ describe("Testing Bennett's Formulas (Mabmab#6492)", () => {
     describe("crit burst hit", () => {
       beforeEach(() => {
         setupStats.hitMode = "critHit"
-        setupStats.modifiers = { finalATK: { baseATK: (data.burst.atkRatio[4 - 1] + 20) / 100, } }
+        setupStats.modifiers = { atk: { baseATK: (data.burst.atkRatio[4 - 1] + 20) / 100, } }
       })
       test("hit", () => {
         const stats = computeAllStats(setupStats)

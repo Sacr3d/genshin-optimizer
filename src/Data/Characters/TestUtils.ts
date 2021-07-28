@@ -18,8 +18,9 @@ export function applyArtifacts(stats, artifacts) {
 }
 export function computeAllStats(baseStats) {
   const stats = { ...baseStats }
-  PreprocessFormulas(GetDependencies(stats.modifiers), stats).formula(stats)
-  return stats
+  const { initialStats, formula } = PreprocessFormulas(GetDependencies(stats.modifiers), stats)
+  formula(initialStats)
+  return { ...stats, ...initialStats }
 }
 
 export function parseTestFlexObject(url) {

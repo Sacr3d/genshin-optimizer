@@ -3,9 +3,10 @@ import { PreprocessFormulas } from "../StatData";
 import { artifactSetPermutations, artifactPermutations, pruneArtifacts, calculateTotalBuildNumber } from "./Build"
 import { GetDependencies } from '../StatDependency';
 import Formula from '../Formula';
-import { IArtifact } from '../Types/artifact';
-import { ArtifactSetKey } from '../Types/consts';
+import { IArtifact, StatKey } from '../Types/artifact';
+import { ArtifactSetKey, SlotKey } from '../Types/consts';
 import { Build, BuildRequest } from '../Types/Build';
+import { ICalculatedStats } from '../Types/stats';
 
 onmessage = async (e: { data: BuildRequest }) => {
   const t1 = performance.now()
@@ -31,7 +32,7 @@ onmessage = async (e: { data: BuildRequest }) => {
     }
   }
 
-  const dependencies = GetDependencies(stats.modifiers, [...targetKeys, ...Object.keys(minFilters), ...Object.keys(maxFilters)]) as any
+  const dependencies = GetDependencies(stats.modifiers, [...targetKeys, ...Object.keys(minFilters), ...Object.keys(maxFilters)]) as StatKey[]
   const oldCount = calculateTotalBuildNumber(splitArtifacts, setFilters)
 
   let prunedArtifacts = splitArtifacts, newCount = oldCount
@@ -61,11 +62,11 @@ onmessage = async (e: { data: BuildRequest }) => {
     builds.splice(maxBuildsToShow)
   }
 
-  const callback = (accu, stats) => {
+  const callback = (accu: StrictDict<SlotKey, IArtifact>, stats: ICalculatedStats) => {
     if (!(++buildCount % 10000)) postMessage({ progress: buildCount, timing: performance.now() - t1, skipped }, undefined as any)
     formula(stats)
-    if (Object.entries(minFilters).some(([key, minimum]: any) => stats[key] < (minimum as number))) return
-    if (Object.entries(maxFilters).some(([key, maximum]: any) => stats[key] > (maximum as number))) return
+    if (Object.entries(minFilters).some(([key, minimum]) => stats[key] < minimum)) return
+    if (Object.entries(maxFilters).some(([key, maximum]) => stats[key] > maximum)) return
     let buildFilterVal = ascending ? -target(stats) : target(stats)
     if (buildFilterVal >= threshold) {
       builds.push({ buildFilterVal, artifacts: { ...accu } })

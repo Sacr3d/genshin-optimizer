@@ -1,19 +1,20 @@
 import { database } from "../Database/Database"
 import { IArtifact } from "../Types/artifact"
 import { allSlotKeys, SlotKey } from "../Types/consts"
+import { mergeStats } from "../Util/StatUtil"
 import WeaponSheet from "../Weapon/WeaponSheet"
 import Character from "./Character"
 import CharacterSheet from "./CharacterSheet"
 
-describe('Character.mergeStats()', () => {
+describe('mergeStats()', () => {
   test('should merge stats', () => {
     const initial = { a: 1, b: 1 }, stats = { b: 1, c: 3 }
-    Character.mergeStats(initial, stats)
+    mergeStats(initial as any, stats as any)
     expect(initial).toEqual({ a: 1, b: 2, c: 3 })
   })
   test('should merge modifiers', () => {
     const initial = { modifiers: { a: { b: 1, c: 1 } } }, stats = { modifiers: { a: { b: 1 }, d: { e: 1 } } }
-    Character.mergeStats(initial, stats)
+    mergeStats(initial, stats)
     expect(initial).toEqual({ modifiers: { a: { b: 2, c: 1 }, d: { e: 1 } } })
   })
 })

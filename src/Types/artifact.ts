@@ -1,4 +1,4 @@
-import { ArtifactSetKey, CharacterKey, ElementKey, Rarity, ReactionModeKey, SetNum, SlotKey } from "./consts";
+import { ArtifactSetKey, CharacterKey, ElementKey, Rarity, SetNum, SlotKey } from "./consts";
 import { BonusStats, BasicStats } from "./stats";
 import IConditional, { IConditionalComplex, IConditionals } from "./IConditional";
 
@@ -18,9 +18,6 @@ export interface SetEffectEntry {
   conditional?: (IConditional | IConditionalComplex),
   conditionals?: IConditionals,
 }
-
-export type StatArr = { key: StatKey, value: number }[]
-export type StatDict = Dict<StatKey, number>
 
 export interface IFlexArtifact {
   id: string

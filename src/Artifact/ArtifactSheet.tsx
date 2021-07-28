@@ -1,8 +1,9 @@
-import { IArtifactSheet, SetEffectEntry, StatArr, StatDict } from "../Types/artifact";
+import { IArtifactSheet, SetEffectEntry } from "../Types/artifact";
 import { allArtifactSets, allRarities, ArtifactSetKey, Rarity, SetNum, SlotKey } from "../Types/consts";
-import { ICalculatedStats } from "../Types/stats";
+import { BonusStats, ICalculatedStats } from "../Types/stats";
 import { IConditionals } from "../Types/IConditional";
 import { deepClone, evalIfFunc } from "../Util/Util";
+import { mergeStats } from "../Util/StatUtil";
 
 export const artifactImport = import("../Data/Artifacts").then(imp =>
   Object.fromEntries(Object.entries(imp.default).map(([set, value]) =>
@@ -20,7 +21,7 @@ export class ArtifactSheet {
   get slotIcons(): Dict<SlotKey, string> { return this.data.icons }
   get setEffects(): Dict<SetNum, SetEffectEntry> { return this.data.setEffects }
   get conditionals(): IConditionals | undefined { return this.data.conditionals }
-  setNumStats(num: SetNum, stats: ICalculatedStats): StatDict {
+  setNumStats(num: SetNum, stats: ICalculatedStats): BonusStats {
     return deepClone(evalIfFunc(this.setEffects[num]?.stats, stats) || {})
   }
   setEffectTexts(setNum: SetNum, stats: ICalculatedStats): Displayable {
@@ -53,12 +54,11 @@ export class ArtifactSheet {
   static setsWithMaxRarity(sheets: StrictDict<ArtifactSetKey, ArtifactSheet>, rarity: Rarity): [ArtifactSetKey, ArtifactSheet][] {
     return Object.entries(sheets).filter(([, sheet]) => Math.max(...sheet.rarity) === rarity)
   }
-  static setEffectsStats(sheets: StrictDict<ArtifactSetKey, ArtifactSheet>, charStats: ICalculatedStats, setToSlots: Dict<ArtifactSetKey, SlotKey[]>): StatArr {
-    let artifactSetEffect: StatArr = []
+  static setEffectsStats(sheets: StrictDict<ArtifactSetKey, ArtifactSheet>, charStats: ICalculatedStats, setToSlots: Dict<ArtifactSetKey, SlotKey[]>): BonusStats {
+    const artifactSetEffect: BonusStats = {}
     Object.entries(setToSlots).forEach(([set, slots]) =>
       Object.entries(sheets[set]?.setEffects ?? {}).forEach(([num, value]) =>
-        parseInt(num) <= slots.length && Object.entries(evalIfFunc(value.stats, charStats) ?? {}).forEach(([key, value]) =>
-          artifactSetEffect.push({ key, value } as any)))) // TODO: Update this to include modifiers
+        parseInt(num) <= slots.length && mergeStats(artifactSetEffect, evalIfFunc(value.stats, charStats))))
     return artifactSetEffect
   }
   static setEffects(sheets: StrictDict<ArtifactSetKey, ArtifactSheet>, setToSlots: Dict<ArtifactSetKey, SlotKey[]>) {

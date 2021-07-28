@@ -15,6 +15,7 @@ import { IFieldDisplay } from "../Types/IFieldDisplay";
 import { deepClone, evalIfFunc } from "../Util/Util";
 import WeaponSheet from "../Weapon/WeaponSheet";
 import CharacterSheet from "./CharacterSheet";
+import { mergeStats } from "../Util/StatUtil";
 
 export default class Character {
   //do not instantiate.
@@ -64,7 +65,7 @@ export default class Character {
 
   static calculateBuildwithArtifact = (initialStats: ICalculatedStats, artifacts: Dict<SlotKey, IArtifact>, artifactSheets: StrictDict<ArtifactSetKey, ArtifactSheet>): ICalculatedStats => {
     const setToSlots = Artifact.setToSlots(artifacts)
-    let artifactSetEffectsStats = ArtifactSheet.setEffectsStats(artifactSheets, initialStats, setToSlots)
+    const artifactSetEffectsStats = ArtifactSheet.setEffectsStats(artifactSheets, initialStats, setToSlots)
 
     let stats = deepClone(initialStats)
     //add artifact and artifactsets
@@ -77,7 +78,7 @@ export default class Character {
         substat && substat.key && (stats[substat.key] = (stats[substat.key] || 0) + substat.value))
     })
     //setEffects
-    artifactSetEffectsStats.forEach(stat => stats[stat.key] = (stats[stat.key] || 0) + stat.value)
+    mergeStats(stats, artifactSetEffectsStats)
     //setEffects conditionals
     Conditional.parseConditionalValues({ artifact: stats?.conditionalValues?.artifact }, (conditional, conditionalValue, [, setKey]) => {
       const { setNumKey } = conditional
@@ -89,22 +90,10 @@ export default class Character {
     stats.equippedArtifacts = Object.fromEntries(Object.entries(artifacts).map(([key, val]: any) => [key, val?.id]))
     stats.setToSlots = setToSlots
     let dependencies = GetDependencies(stats?.modifiers)
-    PreprocessFormulas(dependencies, stats).formula(stats)
-    return stats
+    const { initialStats: preprocessedStats, formula } = PreprocessFormulas(dependencies, stats)
+    formula(preprocessedStats)
+    return { ...stats, ...preprocessedStats }
   }
-  static mergeStats = (initialStats, stats) => stats && Object.entries(stats).forEach(([key, val]: any) => {
-    if (key === "modifiers") {
-      initialStats.modifiers = initialStats.modifiers ?? {}
-      for (const [statKey, modifier] of (Object.entries(val) as any)) {
-        initialStats.modifiers[statKey] = initialStats.modifiers[statKey] ?? {}
-        for (const [mkey, multiplier] of (Object.entries(modifier) as any))
-          initialStats.modifiers[statKey][mkey] = (initialStats.modifiers[statKey][mkey] ?? 0) + multiplier
-      }
-    } else {
-      if (initialStats[key] === undefined) initialStats[key] = val
-      else if (typeof initialStats[key] === "number") initialStats[key] += val
-    }
-  })
 
   static createInitialStats = (character: ICharacter, characterSheet: CharacterSheet, weaponSheet: WeaponSheet): ICalculatedStats => {
     character = deepClone(character)
@@ -148,12 +137,12 @@ export default class Character {
     const specialStatKey = characterSheet.getSpecializedStat(ascension)
     if (specialStatKey) {
       const specializedStatVal = characterSheet.getSpecializedStatVal(ascension)
-      Character.mergeStats(initialStats, { [specialStatKey]: specializedStatVal })
+      mergeStats(initialStats, { [specialStatKey]: specializedStatVal })
     }
 
 
     //add stats from all talents
-    characterSheet.getTalentStatsAll(initialStats as ICalculatedStats, initialStats.characterEle).forEach(s => Character.mergeStats(initialStats, s))
+    characterSheet.getTalentStatsAll(initialStats as ICalculatedStats, initialStats.characterEle).forEach(s => mergeStats(initialStats, s))
 
     //add levelBoosts, from Talent stats.
     for (const key in initialStats.tlvl)
@@ -163,8 +152,8 @@ export default class Character {
     const weaponATK = weaponSheet.getMainStatValue(weapon.level, weapon.ascension)
     initialStats.weaponATK = weaponATK
     const weaponSubKey = weaponSheet.getSubStatKey()
-    if (weaponSubKey) Character.mergeStats(initialStats, { [weaponSubKey]: weaponSheet.getSubStatValue(weapon.level, weapon.ascension) })
-    Character.mergeStats(initialStats, weaponSheet.stats(initialStats as ICalculatedStats))
+    if (weaponSubKey) mergeStats(initialStats, { [weaponSubKey]: weaponSheet.getSubStatValue(weapon.level, weapon.ascension) })
+    mergeStats(initialStats, weaponSheet.stats(initialStats as ICalculatedStats))
 
 
     //Handle conditionals, without artifact, since the pipeline for that comes later.
@@ -175,7 +164,7 @@ export default class Character {
       if (keys[0] === "character" && keys[3] === "talents" && keys[4] !== elementKey) return //fix for traveler, make sure conditionals match element.
       if (!Conditional.canShow(conditional, initialStats)) return
       const { stats: condStats } = Conditional.resolve(conditional, initialStats, conditionalValue)
-      Character.mergeStats(initialStats, condStats)
+      mergeStats(initialStats, condStats)
     })
     return initialStats as ICalculatedStats
   }

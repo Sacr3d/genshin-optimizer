@@ -1,8 +1,9 @@
 import ElementalData from "../Data/ElementalData"
-import { StatKey, StatDict, IArtifact, SubstatKey } from "../Types/artifact"
+import { StatKey, IArtifact, SubstatKey } from "../Types/artifact"
 import { ArtifactSetEffects, PrunedArtifactSetEffects, ArtifactsBySlot, SetFilter } from "../Types/Build"
-import { ArtifactSetKey, ElementKey } from "../Types/consts"
-import { BasicStats, ICalculatedStats } from "../Types/stats"
+import { ArtifactSetKey, ElementKey, SetNum, SlotKey } from "../Types/consts"
+import { BasicStats, BonusStats, ICalculatedStats } from "../Types/stats"
+import { mergeStats } from "../Util/StatUtil"
 
 /**
  * Remove artifacts that can never be used in optimized builds
@@ -13,9 +14,9 @@ import { BasicStats, ICalculatedStats } from "../Types/stats"
  * @param {Set.<setKey>} alwaysAccepted - The list of artifact sets that are always included
  */
 export function pruneArtifacts(artifacts: IArtifact[], artifactSetEffects: ArtifactSetEffects, significantStats: Set<StatKey>, ascending: boolean = false, alwaysAccepted: Set<ArtifactSetKey> = new Set()): IArtifact[] {
-  function shouldKeepFirst(first: StatDict, second: StatDict, preferFirst: boolean) {
-    let firstBetter = Object.entries(first).some(([k, v]) => v! > (second[k] ?? 0))
-    let secondBetter = Object.entries(second).some(([k, v]) => v! > (first[k] ?? 0))
+  function shouldKeepFirst(first: BonusStats, second: BonusStats, preferFirst: boolean) {
+    let firstBetter = Object.entries(first).some(([k, v]) => k === "modifiers" || v! > (second[k] ?? 0))
+    let secondBetter = Object.entries(second).some(([k, v]) => k === "modifiers" || v! > (first[k] ?? 0))
     if (ascending) [firstBetter, secondBetter] = [secondBetter, firstBetter]
     // Keep if first is strictly better, uncomparable, or equal + prefer first
     return firstBetter || (!secondBetter && preferFirst)
@@ -33,7 +34,7 @@ export function pruneArtifacts(artifacts: IArtifact[], artifactSetEffects: Artif
     }
 
   // array of artifacts, artifact stats, and set (may be "other")
-  let tmp: { artifact: IArtifact, stats: Dict<StatKey, number>, set: ArtifactSetKey | "other" }[] = artifacts.map(artifact => {
+  let tmp: { artifact: IArtifact, stats: BonusStats, set: ArtifactSetKey | "other" }[] = artifacts.map(artifact => {
     const stats: Dict<StatKey, number> = {}, set: ArtifactSetKey | "other" = (artifact.setKey in prunedSetEffects) ? artifact.setKey : "other"
     if (significantStats.has(artifact.mainStatKey as any))
       stats[artifact.mainStatKey] = artifact.mainStatVal!
@@ -57,8 +58,8 @@ export function pruneArtifacts(artifacts: IArtifact[], artifactSetEffects: Artif
     tmp = tmp.filter(({ artifact: candidate, stats: candidateStats, set: candidateSet }) => {
       // Possible "additional stats" if a build equips `candidate` on an empty slot.
       let possibleStats = [...Object.values(prunedSetEffects[candidateSet]!), {}].map(c => {
-        const current: Dict<string, number> = { ...candidateStats }
-        Object.entries(c).forEach(([key, value]: any) => current[key] = (current[key] ?? 0) + (value ?? 0))
+        const current: BonusStats = { ...candidateStats }
+        mergeStats(current, c)
         return current
       })
       return tmp.every(({ artifact: other, stats: otherStats, set: otherSet }) => {
@@ -151,30 +152,30 @@ export function calculateTotalBuildNumber(artifactsBySlot: ArtifactsBySlot, setF
  * @param {Object.<setKey, Object.<number, Object.<statKey, statValue>>>} artifactSetEffects - the list of the set effects
  * @param {artifactCallback} callback - the functions called with each permutation
  */
-export function artifactPermutations(initialStats, artifactsBySlot: ArtifactsBySlot, artifactSetEffects, callback) {
-  const slotKeys = Object.keys(artifactsBySlot), setCount = {}, accu = {}
-  function slotPerm(index, stats) {
+export function artifactPermutations(initialStats: ICalculatedStats, artifactsBySlot: ArtifactsBySlot, artifactSetEffects: ArtifactSetEffects, callback) {
+  const slotKeys = Object.keys(artifactsBySlot), setCount: Dict<ArtifactSetKey, SetNum> = {}, accu = {}
+  function slotPerm(index: number, stats: ICalculatedStats) {
     if (index >= slotKeys.length) {
       callback(accu, stats)
       return
     }
 
-    let slotKey = slotKeys[index]
-    for (const artifact of (artifactsBySlot[slotKey] as any)) {
+    const slotKey = slotKeys[index]
+    for (const artifact of artifactsBySlot[slotKey] ?? []) {
       let newStats = { ...stats }
       accumulate(slotKey, artifact, setCount, accu, newStats, artifactSetEffects)
       slotPerm(index + 1, newStats)
-      setCount[artifact.setKey] -= 1
+      setCount[artifact.setKey]! -= 1
     }
   }
 
   slotPerm(0, initialStats)
 }
 
-function accumulate(slotKey, art: IArtifact, setCount, accu, stats, artifactSetEffects) {
-  let setKey = art.setKey
+function accumulate(slotKey: SlotKey, art: IArtifact, setCount: Dict<ArtifactSetKey, SetNum>, accu: Dict<SlotKey, IArtifact>, stats: ICalculatedStats, artifactSetEffects: ArtifactSetEffects) {
+  const setKey = art.setKey
   accu[slotKey] = art
-  setCount[setKey] = (setCount[setKey] ?? 0) + 1
+  setCount[setKey] = (setCount[setKey] ?? 0) + 1 as SetNum
 
   // Add artifact stats
   if (art.mainStatKey in stats) stats[art.mainStatKey] += art.mainStatVal!
@@ -183,10 +184,8 @@ function accumulate(slotKey, art: IArtifact, setCount, accu, stats, artifactSetE
   })
 
   // Add set effects
-  let setEffect = artifactSetEffects[setKey]?.[setCount[setKey]]
-  setEffect && Object.entries(setEffect).forEach(([statKey, val]: any) => {
-    if (statKey in stats) stats[statKey] += val
-  })
+  const setEffect = artifactSetEffects[setKey]?.[setCount[setKey]!]
+  setEffect && mergeStats(stats, setEffect) // TODO: This may slow down the computation
 }
 
 /**
