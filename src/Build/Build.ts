@@ -1,6 +1,6 @@
 import ElementalData from "../Data/ElementalData"
 import { StatKey, IArtifact, SubstatKey } from "../Types/artifact"
-import { ArtifactSetEffects, PrunedArtifactSetEffects, ArtifactsBySlot, SetFilter } from "../Types/Build"
+import { ArtifactSetEffects, ArtifactsBySlot, SetFilter } from "../Types/Build"
 import { ArtifactSetKey, ElementKey, SetNum, SlotKey } from "../Types/consts"
 import { BasicStats, BonusStats, ICalculatedStats } from "../Types/stats"
 import { mergeStats } from "../Util/StatUtil"
@@ -14,9 +14,9 @@ import { mergeStats } from "../Util/StatUtil"
  * @param {Set.<setKey>} alwaysAccepted - The list of artifact sets that are always included
  */
 export function pruneArtifacts(artifacts: IArtifact[], artifactSetEffects: ArtifactSetEffects, significantStats: Set<StatKey>, ascending: boolean = false, alwaysAccepted: Set<ArtifactSetKey> = new Set()): IArtifact[] {
-  function shouldKeepFirst(first: BonusStats, second: BonusStats, preferFirst: boolean) {
-    let firstBetter = Object.entries(first).some(([k, v]) => k === "modifiers" || v! > (second[k] ?? 0))
-    let secondBetter = Object.entries(second).some(([k, v]) => k === "modifiers" || v! > (first[k] ?? 0))
+  function shouldKeepFirst(first: Dict<StatKey, number>, second: Dict<StatKey, number>, preferFirst: boolean) {
+    let firstBetter = Object.entries(first).some(([k, v]) => !isFinite(v) || v > (second[k] ?? 0))
+    let secondBetter = Object.entries(second).some(([k, v]) => !isFinite(v) || v > (first[k] ?? 0))
     if (ascending) [firstBetter, secondBetter] = [secondBetter, firstBetter]
     // Keep if first is strictly better, uncomparable, or equal + prefer first
     return firstBetter || (!secondBetter && preferFirst)
@@ -24,17 +24,30 @@ export function pruneArtifacts(artifacts: IArtifact[], artifactSetEffects: Artif
 
   // Prune unused set effects. Sets with no relevant effects are regrouped to "other"
   const prunedSetEffects: PrunedArtifactSetEffects = { "other": {} }
-  for (const set in artifactSetEffects)
-    for (const num in artifactSetEffects[set]) {
-      const effects = Object.entries(artifactSetEffects[set]![num]).filter(([key]) => significantStats.has(key as StatKey))
+  Object.entries(artifactSetEffects).forEach(([set, effect]) => {
+    Object.entries(effect).forEach(([num, item]) => {
+      const effects = Object.entries(item).filter(([key]) => significantStats.has(key as StatKey))
       if (effects.length > 0) {
         prunedSetEffects[set] = prunedSetEffects[set] ?? {}
         prunedSetEffects[set]![num] = Object.fromEntries(effects)
       }
-    }
+      const modifiers = item.modifiers
+      if (modifiers) {
+        // Modifiers are treated as infinite stats
+        prunedSetEffects[set] = prunedSetEffects[set] ?? {}
+        prunedSetEffects[set]![num] = prunedSetEffects[set]![num] ?? {}
+
+        Object.keys(modifiers)
+          .filter(key => significantStats.has(key as StatKey))
+          .forEach(key =>
+            prunedSetEffects[set]![num]![key] = Infinity
+          )
+      }
+    })
+  })
 
   // array of artifacts, artifact stats, and set (may be "other")
-  let tmp: { artifact: IArtifact, stats: BonusStats, set: ArtifactSetKey | "other" }[] = artifacts.map(artifact => {
+  let tmp: { artifact: IArtifact, stats: Dict<StatKey, number>, set: ArtifactSetKey | "other" }[] = artifacts.map(artifact => {
     const stats: Dict<StatKey, number> = {}, set: ArtifactSetKey | "other" = (artifact.setKey in prunedSetEffects) ? artifact.setKey : "other"
     if (significantStats.has(artifact.mainStatKey as any))
       stats[artifact.mainStatKey] = artifact.mainStatVal!
@@ -234,3 +247,5 @@ export function getTalentStatKeyVariant(skillKey: string, stats: ICalculatedStat
   }
   return eleKey
 }
+
+export type PrunedArtifactSetEffects = Dict<ArtifactSetKey | "other", Dict<SetNum, Dict<StatKey, number>>>

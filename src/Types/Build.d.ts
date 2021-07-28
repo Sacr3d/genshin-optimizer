@@ -3,7 +3,6 @@ import { ArtifactSetKey, SetNum, SlotKey } from "./consts"
 import { BonusStats, ICalculatedStats } from "./stats"
 
 export type ArtifactsBySlot = Dict<SlotKey, IArtifact[]>
-export type PrunedArtifactSetEffects = Dict<ArtifactSetKey | "other", Dict<SetNum, BonusStats>>
 export type ArtifactSetEffects = Dict<ArtifactSetKey, Dict<SetNum, BonusStats>>
 export type SetFilter = { key: ArtifactSetKey | "", num: number }[]
 export interface BuildSetting {
