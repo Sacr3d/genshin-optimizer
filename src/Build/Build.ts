@@ -225,7 +225,7 @@ export function getTalentStatKey(skillKey: string, stats: BasicStats, overwriteE
   return `${eleKey}_${skillKey}_${hitMode}`
 }
 
-export function getTalentStatKeyVariant(skillKey: string, stats: ICalculatedStats, overwriteElement: ElementKey | "physical" | undefined | "" = "") {
+export function getTalentStatKeyVariant(skillKey: string, stats: BasicStats, overwriteElement: ElementKey | "physical" | undefined | "" = "") {
   if ((Object.keys(ElementalData) as any).includes(skillKey)) return skillKey//elemental DMG
   const { infusionAura = "", infusionSelf = "", reactionMode = null, characterEle = "anemo", weaponType = "sword" } = stats
   if (!overwriteElement && weaponType === "catalyst") overwriteElement = characterEle
