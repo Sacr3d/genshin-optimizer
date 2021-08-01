@@ -1,4 +1,4 @@
-import { GetDependencies, GetFormulaDependency, reduceOptimizationTarget } from "./StatDependency"
+import { GetDependencies, GetFormulaDependency } from "./StatDependency"
 import { StatData } from "./StatData"
 
 expect.extend({
@@ -101,19 +101,6 @@ describe('Testing StatDependency', () => {
       test_multi("shattered_multi")
       test_multi("crystalize_multi")
     })
-  })
-})
-
-describe('reduceOptimizationTarget()', () => {
-  test('should reduce', () => {
-    const formula = { dmg: 0.6 }
-    expect(reduceOptimizationTarget(formula)).toBe("dmg")
-  })
-  test('should not reduce complex formulas', () => {
-    const formula = { dmg: { test: 0.6 } }
-    expect(reduceOptimizationTarget(formula)).toBe(formula)
-    const formula2 = { dmg: 0.6, test: 0.5 }
-    expect(reduceOptimizationTarget(formula2)).toBe(formula2)
   })
 })
 

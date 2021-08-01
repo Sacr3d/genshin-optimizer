@@ -2,11 +2,9 @@ import { Formulas, StatData } from "./StatData"
 import { Modifier } from "./Types/stats"
 
 // Generate a statKey dependency, to reduce build generation calculation on a single stat.
-function GetFormulaDependency(formula: (s, c) => number) {
+function GetFormulaDependency(formula: (s) => number) {
   const dependency: Set<string> = new Set()
-  formula(
-    new Proxy({}, { get: (target, prop, receiver) => { dependency.add(prop.toString()) } }),
-    new Proxy({}, { get: (target, prop, receiver) => { dependency.add(prop.toString()) } }))
+  formula(new Proxy({}, { get: (target, prop, receiver) => { dependency.add(prop.toString()) } }))
   return [...dependency]
 }
 const formulaKeyDependency = Object.freeze(Object.fromEntries(
@@ -28,7 +26,7 @@ if (process.env.NODE_ENV === "development") {
   )
 }
 
-function GetDependencies(modifiers: Modifier = {}, keys = Object.keys(StatData)) {
+function GetDependencies(modifiers: Modifier = {}, keys = Object.keys(StatData)): Dependency {
   let dependencies: Set<string> = new Set()
   keys.forEach(key => InsertDependencies(key, modifiers, dependencies))
   return [...dependencies]
@@ -40,13 +38,9 @@ function InsertDependencies(key: string, modifiers: Modifier, dependencies: Set<
   dependencies.add(key)
 }
 
-//if the optimizationTarget is in the form of {dmg:0.6}, it can be reduced to "dmg" for the purpose to build generation.
-const reduceOptimizationTarget = (optimizationTarget) =>
-  (typeof optimizationTarget === "object" && Object.keys(optimizationTarget).length === 1 && typeof optimizationTarget[Object.keys(optimizationTarget)[0] as any] === "number") ? Object.keys(optimizationTarget)[0] : optimizationTarget
-
+type Dependency = string[]
 
 export {
   GetFormulaDependency,
   GetDependencies,
-  reduceOptimizationTarget,
 }
