@@ -182,7 +182,7 @@ export default class Character {
     const talentSheet = characterSheet.getTalent(eleKey)
     talentSheet && Object.entries(talentSheet.formula).forEach(([talentKey, formulas]) => {
       Object.values(formulas).forEach((formula: any) => {
-        if (!formula.field.canShow(stats)) return
+        if (!formula.field?.canShow(stats)) return // TODO: What do we do if `formula.field` is not defined
         if (talentKey === "normal" || talentKey === "charged" || talentKey === "plunging") talentKey = "auto"
         const formKey = `talentKey_${talentKey}`
         if (!charFormulas[formKey]) charFormulas[formKey] = []
