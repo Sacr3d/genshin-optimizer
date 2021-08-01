@@ -229,15 +229,9 @@ function PreprocessFormulas(dependencyKeys: string[], stats: ICalculatedStats) {
     return ["", () => 0] as KeyedFormula
   }).filter(x => x[0])
 
-  const modifierList = dependencyKeys.map(key => {
-    if (key in modifiers) {
-      const modifier = modifiers[key]
-      return [key,
-        (s: ICalculatedStats) =>
-          modifier.reduce((ac, path) => ac + Formula.getCurrent(path)(stats)[0](s), 0)] as KeyedFormula
-    }
-    return ["", () => 0] as KeyedFormula
-  }).filter(x => x[0])
+  const modFormula = Formula.computeModifier(stats, Object.fromEntries(Object.entries(modifiers)
+    .filter(([key]) => dependencyKeys.includes(key)) // Keep only relevant keys
+  ))
 
   const postModFormulaList = dependencyKeys.map(key => {
     if (getStage(key) !== 1)
@@ -258,13 +252,12 @@ function PreprocessFormulas(dependencyKeys: string[], stats: ICalculatedStats) {
     formula: (s: ICalculatedStats) => {
       preModFormulaList.forEach(([key, formula]) => s[key] = formula(s))
 
-      const modStats = Formula.computeModifier(s, s.modifiers) // late-binding modifiers (arts mod)
-      if (modifierList.length) {
-        mergeStats(modStats, Object.fromEntries(modifierList.map(([key, formula]) => [key, formula(s)])))
-        mergeStats(modStats, { modifiers })
-      }
+      const modStats = Formula.computeModifier(s, s.modifiers)(s) // late-binding modifiers (arts mod)
+      mergeStats(modStats, modFormula(s))
       s.premod = Object.fromEntries(Object.keys(modifiers).map(key => [key, s[key]]))
-      mergeStats(s, modStats) // Apply modifiers
+      // Apply modifiers
+      mergeStats(s, modStats)
+      mergeStats(s, { modifiers })
 
       postModFormulaList.forEach(([key, formula]) => s[key] = formula(s))
     }

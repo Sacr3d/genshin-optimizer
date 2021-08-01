@@ -39,7 +39,7 @@ function InsertDependencies(baseStat: IBaseStat, key: string, modifiers: Modifie
   found.add(key)
 
   formulaKeyDependency[key]?.forEach(k => InsertDependencies(baseStat, k, modifiers, dependencies, found));
-  (modifiers[key] ?? []).forEach(path => Formula.getCurrent(path)(baseStat)[1].forEach(k =>
+  (modifiers[key] ?? []).forEach(path => Formula.getCurrent(path, baseStat)[1].forEach(k =>
     InsertDependencies(baseStat, k, modifiers, dependencies, found)))
   dependencies[getStage(key)].add(key)
 }
