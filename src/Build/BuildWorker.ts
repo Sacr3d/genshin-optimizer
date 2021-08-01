@@ -36,6 +36,7 @@ onmessage = async (e: { data: BuildRequest }) => {
   const artifactSetBySlot = Object.fromEntries(Object.entries(splitArtifacts).map(([key, artifacts]) =>
     [key, new Set(artifacts.map(artifact => artifact.setKey))]
   ))
+  // modifierStats contains all modifiers that are applicable to the current build
   const modifierStats: BonusStats = {}
   Object.entries(artifactSetEffects).forEach(([set, effects]) =>
     Object.entries(effects).filter(([setNum, stats]) =>
