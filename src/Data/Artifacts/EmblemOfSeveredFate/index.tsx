@@ -5,6 +5,10 @@ import goblet from './Item_Scarlet_Vessel.png'
 import circlet from './Item_Ornate_Kabuto.png'
 import { IConditionals } from '../../../Types/IConditional'
 import { IArtifactSheet } from '../../../Types/artifact'
+import { FormulaPathBase } from '../../formula'
+import { KeyPath } from '../../../Util/KeyPathUtil'
+
+const path = KeyPath<FormulaPathBase>().artifact.EmblemOfSeveredFate
 
 const conditionals: IConditionals = {
   set4: {
@@ -52,9 +56,9 @@ const artifact: IArtifactSheet = {
       stats: { enerRech_: 20 }
     },
     4: {
-      text: <span>Increases Elemental Burst DMG by 25% of Energy Recharge. A maximum of 75% bonus DMG can be obtained in this way. <small className="text-danger"><strong>Caution:</strong> this bonus is not currently applied in character/builer. You need to manually add the Ele. Burst DMG in Character Editor.</small></span>,
+      text: <span>Increases Elemental Burst DMG by 25% of Energy Recharge. A maximum of 75% bonus DMG can be obtained in this way.</span>,
       stats: {
-        modifiers: { burst_dmg_: { enerRech_: 0.25, } },
+        modifiers: { burst_dmg_: [path.s4()] },
       }
     }
   }

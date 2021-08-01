@@ -89,7 +89,7 @@ export default class Character {
 
     stats.equippedArtifacts = Object.fromEntries(Object.entries(artifacts).map(([key, val]: any) => [key, val?.id]))
     stats.setToSlots = setToSlots
-    let dependencies = GetDependencies(stats?.modifiers)
+    let dependencies = GetDependencies(stats, stats?.modifiers)
     const { initialStats: preprocessedStats, formula } = PreprocessFormulas(dependencies, stats)
     formula(preprocessedStats)
     return { ...stats, ...preprocessedStats }

@@ -234,7 +234,7 @@ function PreprocessFormulas(dependencyKeys: string[], stats: ICalculatedStats) {
       const modifier = modifiers[key]
       return [key,
         (s: ICalculatedStats) =>
-          Object.entries(modifier).reduce((ac, [key, value]) => ac + s[key] * value, 0)] as KeyedFormula
+          modifier.reduce((ac, path) => ac + Formula.getCurrent(path)(stats)[0](s), 0)] as KeyedFormula
     }
     return ["", () => 0] as KeyedFormula
   }).filter(x => x[0])

@@ -3,6 +3,7 @@ import { CharacterKey, ElementKey, HitModeKey, ReactionModeKey, SlotKey, WeaponK
 import { BasicStats, ICalculatedStats } from "./stats";
 import IConditional, { IConditionals } from "./IConditional";
 import { IFieldDisplay } from "./IFieldDisplay";
+import { StatKey } from "./artifact";
 
 interface ICharacterSheetBase {
   name: Displayable,

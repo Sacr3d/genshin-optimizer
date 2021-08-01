@@ -14,7 +14,7 @@ describe('mergeStats()', () => {
   })
   test('should merge modifiers', () => {
     const initial = { modifiers: { a: { b: 1, c: 1 } } }, stats = { modifiers: { a: { b: 1 }, d: { e: 1 } } }
-    mergeStats(initial, stats)
+    mergeStats(initial as any, stats as any)
     expect(initial).toEqual({ modifiers: { a: { b: 2, c: 1 }, d: { e: 1 } } })
   })
 })

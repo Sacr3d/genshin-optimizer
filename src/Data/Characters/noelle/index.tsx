@@ -20,16 +20,20 @@ import { IConditionals } from '../../../Types/IConditional'
 import { ICharacterSheet } from '../../../Types/character'
 import { Translate, TransWrapper } from '../../../Components/Translate'
 import { claymoreChargedDocSection, normalDocSection, plungeDocSection, sgt, talentTemplate } from '../SheetUtil'
+import { KeyPath } from '../../../Util/KeyPathUtil'
+import { FormulaPathBase } from '../../formula'
+
+const path = KeyPath<FormulaPathBase, any>().character.noelle
 const tr = (strKey: string) => <Translate ns="char_noelle_gen" key18={strKey} />
 const noelle = (strKey: string) => <TransWrapper ns="char_noelle" key18={strKey} />
 const conditionals: IConditionals = {
   q: { // Sweeping Time
     name: tr("burst.name"),
     maxStack: 1,
-    stats: stats => ({
-      modifiers: { finalATK: { finalDEF: (data.burst.bonus[stats.tlvl.burst] + (stats.constellation >= 6 ? 50 : 0)) / 100 } },
+    stats: {
+      modifiers: { finalATK: [path.burst.bonus()] },
       infusionSelf: "geo",
-    }),
+    },
     fields: [{ text: noelle("qlarger") }]
   }
 }

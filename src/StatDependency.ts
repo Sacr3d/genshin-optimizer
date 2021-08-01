@@ -1,4 +1,6 @@
+import Formula from "./Formula"
 import { Formulas, getStage, StatData } from "./StatData"
+import { IBaseStat } from "./Types/character"
 import { Modifier } from "./Types/stats"
 
 // Generate a statKey dependency, to reduce build generation calculation on a single stat.
@@ -26,18 +28,19 @@ if (process.env.NODE_ENV === "development") {
   )
 }
 
-function GetDependencies(modifiers: Modifier = {}, keys = Object.keys(StatData)): Dependencies {
+function GetDependencies(baseStat: IBaseStat, modifiers: Modifier = {}, keys = Object.keys(StatData)): Dependencies {
   const found = new Set<string>()
   const dependencies = [new Set<string>(), new Set<string>()]
-  keys.forEach(key => InsertDependencies(key, modifiers, dependencies, found))
+  keys.forEach(key => InsertDependencies(baseStat, key, modifiers, dependencies, found))
   return dependencies.flatMap(dep => [...dep])
 }
-function InsertDependencies(key: string, modifiers: Modifier, dependencies: Set<string>[], found: Set<string>) {
+function InsertDependencies(baseStat: IBaseStat, key: string, modifiers: Modifier, dependencies: Set<string>[], found: Set<string>) {
   if (found.has(key)) return
   found.add(key)
 
-  formulaKeyDependency[key]?.forEach(k => InsertDependencies(k, modifiers, dependencies, found))
-  Object.keys(modifiers[key] ?? {}).forEach(k => InsertDependencies(k, modifiers, dependencies, found))
+  formulaKeyDependency[key]?.forEach(k => InsertDependencies(baseStat, k, modifiers, dependencies, found));
+  (modifiers[key] ?? []).forEach(path => Formula.getCurrent(path)(baseStat)[1].forEach(k =>
+    InsertDependencies(baseStat, k, modifiers, dependencies, found)))
   dependencies[getStage(key)].add(key)
 }
 

@@ -45,7 +45,7 @@ onmessage = async (e: { data: BuildRequest }) => {
   )
   mergeStats(modifierStats, { modifiers: stats.modifiers ?? {} })
 
-  const dependencies = GetDependencies(modifierStats.modifiers, [...targetKeys, ...Object.keys(minFilters), ...Object.keys(maxFilters)]) as StatKey[]
+  const dependencies = GetDependencies(stats, modifierStats.modifiers, [...targetKeys, ...Object.keys(minFilters), ...Object.keys(maxFilters)]) as StatKey[]
   const oldCount = calculateTotalBuildNumber(splitArtifacts, setFilters)
 
   let prunedArtifacts = splitArtifacts, newCount = oldCount
