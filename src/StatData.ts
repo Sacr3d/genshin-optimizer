@@ -220,8 +220,9 @@ function PreprocessFormulas(dependencyKeys: string[], stats: ICalculatedStats) {
   const { modifiers = {} } = stats, initialStats = {} as ICalculatedStats
 
   const preModFormulaList = dependencyKeys.map(key => {
-    if ((key in Formulas) && key !== "finalATK" && key !== "finalHP" && key !== "finalDEF")
+    if (getStage(key) !== 0)
       return ["", () => 0] as KeyedFormula
+
     if (key in Formulas)
       return [key, Formulas[key]] as KeyedFormula
     initialStats[key] = stats[key] ?? StatData[key]?.default ?? 0
@@ -239,7 +240,7 @@ function PreprocessFormulas(dependencyKeys: string[], stats: ICalculatedStats) {
   }).filter(x => x[0])
 
   const postModFormulaList = dependencyKeys.map(key => {
-    if (!(key in Formulas) || key === "finalATK" || key === "finalHP" || key === "finalDEF")
+    if (getStage(key) !== 1)
       return ["", () => 0] as KeyedFormula
 
     const func = Formulas[key]!
@@ -268,6 +269,11 @@ function PreprocessFormulas(dependencyKeys: string[], stats: ICalculatedStats) {
       postModFormulaList.forEach(([key, formula]) => s[key] = formula(s))
     }
   }
+}
+export function getStage(key: string): number {
+  return ((key in Formulas) && key !== "baseATK" && key !== "finalATK" && key !== "finalHP" && key !== "finalDEF")
+    ? 1 // postmod
+    : 0 // premod
 }
 
 export {
