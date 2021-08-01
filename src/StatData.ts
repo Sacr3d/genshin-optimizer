@@ -2,6 +2,7 @@ import { clamp } from "./Util/Util";
 import { hitTypes, hitMoves, hitElements, transformativeReactions, amplifyingReactions, transformativeReactionLevelMultipliers, crystalizeLevelMultipliers } from "./StatConstants"
 import { ICalculatedStats } from "./Types/stats";
 import { mergeStats } from "./Util/StatUtil";
+import Formula from "./Formula";
 
 export interface StatItem {
   name: string, pretty?: string, const?: boolean, default?: any, variant?: string,
@@ -216,7 +217,17 @@ if (process.env.NODE_ENV === "development") console.log(StatData)
 type KeyedFormula = [string, (s: ICalculatedStats) => number]
 //assume all the dependency for the modifiers are part of the dependencyKeys as well
 function PreprocessFormulas(dependencyKeys: string[], stats: ICalculatedStats) {
-  const { modifiers = {} } = stats, initialStats = {}
+  const { modifiers = {} } = stats, initialStats = {} as ICalculatedStats
+
+  const preModFormulaList = dependencyKeys.map(key => {
+    if ((key in Formulas) && key !== "finalATK" && key !== "finalHP" && key !== "finalDEF")
+      return ["", () => 0] as KeyedFormula
+    if (key in Formulas)
+      return [key, Formulas[key]] as KeyedFormula
+    initialStats[key] = stats[key] ?? StatData[key]?.default ?? 0
+    return ["", () => 0] as KeyedFormula
+  }).filter(x => x[0])
+
   const modifierList = dependencyKeys.map(key => {
     if (key in modifiers) {
       const modifier = modifiers[key]
@@ -226,19 +237,12 @@ function PreprocessFormulas(dependencyKeys: string[], stats: ICalculatedStats) {
     }
     return ["", () => 0] as KeyedFormula
   }).filter(x => x[0])
-  const formulaList = dependencyKeys.map(key => {
-    let funcIndicator = 0
-    if (!Formulas[key]) funcIndicator += 1
 
-    let tmp: (s) => number
-    switch (funcIndicator) {
-      case 0: tmp = Formulas[key]!; break
-      default: tmp = (s) => s[key]; break
-    }
-    const func = tmp
+  const postModFormulaList = dependencyKeys.map(key => {
+    if (!(key in Formulas) || key === "finalATK" || key === "finalHP" || key === "finalDEF")
+      return ["", () => 0] as KeyedFormula
 
-    if (!(key in Formulas))
-      initialStats[key] = stats[key] ?? StatData[key]?.default ?? 0
+    const func = Formulas[key]!
 
     if (StatData[key]?.const) {
       initialStats[key] = func(initialStats)
@@ -251,12 +255,16 @@ function PreprocessFormulas(dependencyKeys: string[], stats: ICalculatedStats) {
   return {
     initialStats: initialStats as ICalculatedStats,
     formula: (s: ICalculatedStats) => {
-      // Modifiers before formula:
-      const modifiers = s.modifiers
-      if (modifiers) // New modifiers
-        mergeStats(stats, { modifiers })
-      modifierList.forEach(([key, formula]) => s[key] += formula(s))
-      formulaList.forEach(([key, formula]) => s[key] = formula(s))
+      preModFormulaList.forEach(([key, formula]) => s[key] = formula(s))
+
+      const modStats = Formula.computeModifier(s, s.modifiers) // late-binding modifiers (arts mod)
+      if (modifierList.length) {
+        mergeStats(modStats, Object.fromEntries(modifierList.map(([key, formula]) => [key, formula(s)])))
+        mergeStats(modStats, { modifiers })
+      }
+      mergeStats(s, modStats) // Apply modifiers
+
+      postModFormulaList.forEach(([key, formula]) => s[key] = formula(s))
     }
   }
 }
