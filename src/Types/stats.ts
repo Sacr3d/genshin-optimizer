@@ -37,6 +37,7 @@ export interface BasicStats {
  * and preprocessing.
  */
 export type ICalculatedStats = BasicStats & Required<BonusStats> & {
+  premod: Partial<ICalculatedStats>
   equippedArtifacts?: StrictDict<SlotKey, string>
   setToSlots: Dict<ArtifactSetKey, SlotKey[]>
 } & {

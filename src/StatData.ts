@@ -262,6 +262,7 @@ function PreprocessFormulas(dependencyKeys: string[], stats: ICalculatedStats) {
         mergeStats(modStats, Object.fromEntries(modifierList.map(([key, formula]) => [key, formula(s)])))
         mergeStats(modStats, { modifiers })
       }
+      s.premod = Object.fromEntries(Object.keys(modifiers).map(key => [key, s[key]]))
       mergeStats(s, modStats) // Apply modifiers
 
       postModFormulaList.forEach(([key, formula]) => s[key] = formula(s))
