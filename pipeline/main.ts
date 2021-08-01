@@ -1,4 +1,4 @@
-import { characterIdMap, Language, propTypeMap, QualityTypeMap, weaponMap, DWeaponTypeKey, WeaponKey, CharacterKey, weaponIdMap, PropTypeKey, StatKey, WeaponTypeKey } from '.'
+import { characterIdMap, Language, propTypeMap, QualityTypeMap, weaponMap, DWeaponTypeKey, WeaponKey, CharacterKey, weaponIdMap, PropTypeKey, StatKey, WeaponTypeKey, artifactIdMap, artifactSlotMap } from '.'
 import mapHashData from './Data'
 import artifactMainstatData from './DataminedModules/artifact/artifactMainstat'
 import artifactSubstatData from './DataminedModules/artifact/artifactSubstat'
@@ -11,12 +11,14 @@ import passives from './DataminedModules/character/passives'
 import skillDepot, { AvatarSkillDepotExcelConfigData } from './DataminedModules/character/skillDepot'
 import talents from './DataminedModules/character/talents'
 import weaponData from './DataminedModules/weapon/weapon'
-import WeaponRefinementData from './DataminedModules/weapon/weaponRefinement'
+import equipAffixDataData from './DataminedModules/common/equipAffix'
 import weaponExpCurve, { WeaponGrowCurveKey } from './DataminedModules/weapon/weaponExpCurve'
 import { extrapolateFloat } from './extrapolateFloat'
 import { parsingFunctions, preprocess } from './parseUtil'
 import { crawlObject, dumpFile, layeredAssignment } from './Util'
 import weaponAscensionData from './DataminedModules/weapon/weaponAscension'
+import artifactSetData from './DataminedModules/artifact/artifactSets'
+import artifactPiecesData from './DataminedModules/artifact/artifactPiecesData'
 const fs = require('fs')
 
 const languageMap = {
@@ -33,7 +35,7 @@ const languageMap = {
   ru: require('./GenshinData/TextMap/TextMapRU.json'),
   th: require('./GenshinData/TextMap/TextMapTH.json'),
   vi: require('./GenshinData/TextMap/TextMapVI.json')
-}
+} as const
 
 /* ####################################################
  * # Importing data from datamined files.
@@ -106,7 +108,7 @@ const weaponDataDump = Object.fromEntries(Object.entries(weaponData).filter(([we
   const { WeaponType, RankLevel, WeaponProp, SkillAffix, WeaponPromoteId } = weaponData
   const [main, sub] = WeaponProp
   const [refinementDataId,] = SkillAffix
-  const refData = refinementDataId && WeaponRefinementData[refinementDataId]
+  const refData = refinementDataId && equipAffixDataData[refinementDataId]
 
   const ascData = weaponAscensionData[WeaponPromoteId]
 
@@ -151,11 +153,42 @@ dumpFile(`../src/Character/expCurve_gen.json`, characterExpCurve)
 dumpFile('../src/Artifact/artifact_sub_gen.json', artifactSubstatData)
 dumpFile('../src/Artifact/artifact_main_gen.json', artifactMainstatData)
 
+//generate the MapHashes for localization for artifacts
+Object.entries(artifactSetData).forEach(([SetId, data]) => {
+  if (SetId === "15004" || SetId === "15012") return // "Glacier and Snowfield"  "Prayers to the Firmament"
+  const { EquipAffixId, SetNeedNum, ContainsList } = data
+  if (!EquipAffixId) return
+
+  const setEffects = Object.fromEntries(SetNeedNum.map((setNeed, i) => {
+    const equipAffixData = equipAffixDataData[EquipAffixId]?.[i]
+    if (!equipAffixData) throw `No data for EquipAffixId ${EquipAffixId} for setEffect ${setNeed}`
+    return [setNeed, equipAffixData.DescTextMapHash]
+  }))
+
+  const pieces = Object.fromEntries(ContainsList.map(pieceId => {
+    const pieceData = artifactPiecesData[pieceId]
+    if (!pieceData) throw `No piece data with Id ${pieceId} in SetId ${SetId}`
+    const { EquipType, NameTextMapHash, DescTextMapHash } = pieceData
+    return [artifactSlotMap[EquipType], {
+      name: NameTextMapHash,
+      desc: DescTextMapHash
+    }]
+  }))
+
+  const setName = equipAffixDataData[EquipAffixId]?.[0]?.NameTextMapHash
+
+  mapHashData.artifact[artifactIdMap[SetId]] = {
+    setName,
+    setEffects,
+    pieces
+  }
+})
+
 //generate the MapHashes for localization for weapons
-Object.entries(weaponData).filter(([weaponid,]) => weaponid in weaponIdMap).map(([weaponid, weaponData]) => {
+Object.entries(weaponData).filter(([weaponid,]) => weaponid in weaponIdMap).forEach(([weaponid, weaponData]) => {
   const { NameTextMapHash, DescTextMapHash, SkillAffix } = weaponData
   const [ascensionDataId,] = SkillAffix
-  const ascData = ascensionDataId && WeaponRefinementData[ascensionDataId]
+  const ascData = ascensionDataId && equipAffixDataData[ascensionDataId]
 
   mapHashData.weapon[weaponIdMap[weaponid]] = {
     name: NameTextMapHash,
@@ -252,7 +285,7 @@ Object.entries(languageData).forEach(([lang, data]) => {
     if (type === "sheet" || type === "weaponKey")
       return dumpFile(`${fileDir}/${type}_gen.json`, typeData)
 
-    //weapons/character
+    //weapons/characters/artifacts
     Object.entries((typeData as any)).forEach(([itemKey, data]) =>
       dumpFile(`${fileDir}/${type}_${itemKey}_gen.json`, data))
   })

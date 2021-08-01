@@ -32,13 +32,13 @@ type EquipAffixExcelConfigData = {
   //   0.0
   // ]
 }
-const WeaponRefinementDataSrc = require('../../GenshinData/ExcelBinOutput/EquipAffixExcelConfigData.json') as EquipAffixExcelConfigData[]
+const equipAffixDataDataSrc = require('../../GenshinData/ExcelBinOutput/EquipAffixExcelConfigData.json') as EquipAffixExcelConfigData[]
 
-const WeaponRefinementData = {} as Record<number, Array<EquipAffixExcelConfigData>>
-WeaponRefinementDataSrc.forEach(data => {
+const equipAffixDataData = {} as Record<number, Array<EquipAffixExcelConfigData>>
+equipAffixDataDataSrc.forEach(data => {
   const { Id, Level = 0 } = data
-  if (!WeaponRefinementData[Id]) WeaponRefinementData[Id] = []
-  layeredAssignment(WeaponRefinementData, [Id, Level], data)
+  if (!equipAffixDataData[Id]) equipAffixDataData[Id] = []
+  layeredAssignment(equipAffixDataData, [Id, Level], data)
 })
 
-export default WeaponRefinementData //
+export default equipAffixDataData //
