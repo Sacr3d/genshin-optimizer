@@ -1,6 +1,7 @@
 import { ArtifactSetKey, CharacterKey, ElementKey, Rarity, SetNum, SlotKey } from "./consts";
 import { BonusStats, BasicStats } from "./stats";
 import IConditional, { IConditionalComplex, IConditionals } from "./IConditional";
+import { DocumentSection } from "./character";
 
 export type IArtifactSheets = StrictDict<ArtifactSetKey, IArtifactSheet>
 
@@ -17,6 +18,7 @@ export interface SetEffectEntry {
   stats?: BonusStats | ((stats: BasicStats) => BonusStats)
   conditional?: (IConditional | IConditionalComplex),
   conditionals?: IConditionals,
+  document?: DocumentSection[],
 }
 
 export interface IFlexArtifact {

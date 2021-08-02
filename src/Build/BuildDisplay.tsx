@@ -546,7 +546,7 @@ function ArtConditionalModal({ showArtCondModal, setshowArtCondModal, initialSta
   const closeArtCondModal = useCallback(() => setshowArtCondModal(false), [setshowArtCondModal])
   const artifactSheets = usePromise(ArtifactSheet.getAll(), [])
   if (!artifactSheets) return null
-  const artSetKeyList = ArtifactSheet.namesByMaxRarities(artifactSheets).flatMap(([, items]) => items.map(([key]) => [key, artifactSheets[key]] as const))
+  const artSetKeyList = Object.entries(ArtifactSheet.setKeysByRarities(artifactSheets)).reverse().flatMap(([, sets]) => sets)
   return <Modal show={showArtCondModal} onHide={closeArtCondModal} size="xl" contentClassName="bg-transparent">
     <Card bg="darkcontent" text={"lightfont" as any}>
       <Card.Header>
@@ -568,7 +568,8 @@ function ArtConditionalModal({ showArtCondModal, setshowArtCondModal, initialSta
       </Card.Header>
       <Card.Body>
         <Row>
-          {artSetKeyList.map(([setKey, sheet]) => {
+          {artSetKeyList.map(setKey => {
+            const sheet = artifactSheets[setKey]
             let icon = Object.values(sheet.slotIcons)[0]
             let numStars = [...sheet.rarity][0]
             return <Col className="mb-2" key={setKey} xs={12} lg={6} xl={4}>

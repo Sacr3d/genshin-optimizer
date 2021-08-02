@@ -55,7 +55,7 @@ export default function ArtifactCard({ artifactId, artifactObj, onEdit, onDelete
           <Image src={sheet?.slotIcons[slotKey] ?? ""} className={`w-100 h-auto grad-${numStars}star m-1`} thumbnail />
         </Col>
         <Col className="pt-3">
-          <h6><b>{sheet?.slotNames[slotKey] ?? "Unknown Piece Name"}</b></h6>
+          <h6><b>{sheet?.getSlotName(slotKey) ?? "Unknown Piece Name"}</b></h6>
           <div><SlotNameWithIcon slotKey={slotKey} />{` +${level}`}</div>
         </Col>
       </Row>
