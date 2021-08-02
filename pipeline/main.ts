@@ -1,6 +1,8 @@
-import { characterIdMap, Language, propTypeMap, QualityTypeMap, weaponMap, DWeaponTypeKey, WeaponKey, CharacterKey, weaponIdMap, PropTypeKey, StatKey, WeaponTypeKey, artifactIdMap, artifactSlotMap } from '.'
+import { artifactIdMap, artifactSlotMap, characterIdMap, CharacterKey, DWeaponTypeKey, Language, propTypeMap, QualityTypeMap, StatKey, weaponIdMap, WeaponKey, weaponMap, WeaponTypeKey } from '.'
 import mapHashData from './Data'
 import artifactMainstatData from './DataminedModules/artifact/artifactMainstat'
+import artifactPiecesData from './DataminedModules/artifact/artifactPiecesData'
+import artifactSetData from './DataminedModules/artifact/artifactSets'
 import artifactSubstatData from './DataminedModules/artifact/artifactSubstat'
 import ascensionData from './DataminedModules/character/ascension'
 import characterData from './DataminedModules/character/character'
@@ -10,15 +12,13 @@ import constellations from './DataminedModules/character/constellations'
 import passives from './DataminedModules/character/passives'
 import skillDepot, { AvatarSkillDepotExcelConfigData } from './DataminedModules/character/skillDepot'
 import talents from './DataminedModules/character/talents'
-import weaponData from './DataminedModules/weapon/weapon'
 import equipAffixDataData from './DataminedModules/common/equipAffix'
+import weaponData from './DataminedModules/weapon/weapon'
+import weaponAscensionData from './DataminedModules/weapon/weaponAscension'
 import weaponExpCurve, { WeaponGrowCurveKey } from './DataminedModules/weapon/weaponExpCurve'
 import { extrapolateFloat } from './extrapolateFloat'
 import { parsingFunctions, preprocess } from './parseUtil'
 import { crawlObject, dumpFile, layeredAssignment } from './Util'
-import weaponAscensionData from './DataminedModules/weapon/weaponAscension'
-import artifactSetData from './DataminedModules/artifact/artifactSets'
-import artifactPiecesData from './DataminedModules/artifact/artifactPiecesData'
 const fs = require('fs')
 
 const languageMap = {
@@ -141,7 +141,7 @@ const weaponDataDump = Object.fromEntries(Object.entries(weaponData).filter(([we
   return [weaponIdMap[weaponid], result]
 })) as Record<WeaponKey, WeaponData>
 
-//dump data file to respective character directory.
+//dump data file to respective weapon directory.
 Object.entries(weaponDataDump).forEach(([weaponKey, data]) =>
   dumpFile(`../src/Data/Weapons/${data.weaponType[0].toUpperCase() + data.weaponType.slice(1)}/${weaponKey}/data_gen.json`, data))
 

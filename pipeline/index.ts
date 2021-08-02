@@ -279,7 +279,7 @@ export const artifactIdMap = {
 } as const
 
 export const artifactSlotMap = {
-  EQUIP_NECKLACE: "feather",
+  EQUIP_NECKLACE: "plume",
   EQUIP_BRACER: "flower",
   EQUIP_SHOES: "sands",
   EQUIP_RING: "goblet",
