@@ -149,7 +149,7 @@ export default function ArtifactEditor({ artifactIdToEdit, cancelEdit }: Artifac
                 </Dropdown.Item>)}
             </DropdownButton>
             <FormControl
-              value={artifact ? `${Artifact.mainStatValue(artifact.mainStatKey, numStars, level)}${Stat.getStatUnit(artifact.mainStatKey)}` : t`mainStat` as any}
+              value={artifact ? `${valueString(Artifact.mainStatValue(artifact.mainStatKey, numStars, level), Stat.getStatUnit(artifact.mainStatKey))}` : t`mainStat` as any}
               disabled
               readOnly
             />

@@ -63,5 +63,4 @@ export const allSubstats = ["hp", "hp_", "atk", "atk_", "def_", "def", "eleMas",
 type SpecializedStatKey = "normal_critRate_" | "charged_critRate_" | "plunging_dmg_" | "powShield_" | "enemyDEFRed_" | "skillCDRed_" | "incHeal_" | "weakspotDMG_" | "dmg_" | "moveSPD_" | "staminaDec_" | "atkSPD_" | "cdRed_"
 
 export type MainStatKey = typeof allMainStatKeys[number]
-export type CompressMainStatKey = "hp" | "hp_" | "atk" | "atk_" | "def_" | "eleMas" | "enerRech_" | "critRate_" | "critDMG_" | "physical_dmg_" | "ele_dmg_" | "heal_"
 export type SubstatKey = typeof allSubstats[number]
