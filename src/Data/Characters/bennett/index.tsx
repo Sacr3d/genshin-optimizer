@@ -31,6 +31,11 @@ const conditionals: IConditionals = {
     stats: {
       modifiers: { finalATK: [path.burst.atkBonus()] },
     },
+    fields: [{
+      text: "ATK Bonus Ratio",
+      formulaText: stats => <span>{stats.constellation < 1 ? data.burst.atkRatio[stats.tlvl.burst] : `(${data.burst.atkRatio[stats.tlvl.burst]} + 20)`}% {Stat.printStat("baseATK", stats)}</span>,
+      formula: formula.burst.atkBonus
+    },]
   },
   c2: { // Impasse Conqueror
     canShow: stats => stats.constellation >= 2,
@@ -107,10 +112,6 @@ const char: ICharacterSheet = {
             formulaText: stats => <span>( {data.burst.healHP[stats.tlvl.burst]}% Max HP + {data.burst.healHPFlat[stats.tlvl.burst]} ) * {Stat.printStat("heal_multi", stats)}</span>,
             formula: formula.burst.regen,
             variant: "success",
-          }, {
-            text: "ATK Bonus Ratio",
-            formulaText: stats => <span>{stats.constellation < 1 ? data.burst.atkRatio[stats.tlvl.burst] : `(${data.burst.atkRatio[stats.tlvl.burst]} + 20)`}% {Stat.printStat("baseATK", stats)}</span>,
-            formula: formula.burst.atkBonus
           }, {
             text: "Duration",
             value: "12s",

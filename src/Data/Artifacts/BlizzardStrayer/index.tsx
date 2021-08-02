@@ -6,7 +6,7 @@ import circlet from './Item_Broken_Rime\'s_Echo.png'
 import { IArtifactSheet } from '../../../Types/artifact'
 import { IConditionals } from '../../../Types/IConditional'
 const conditionals: IConditionals = {
-  set4: {
+  4: {
     name: "Attack enemy",
     states: {
       c: {
@@ -22,13 +22,6 @@ const conditionals: IConditionals = {
 }
 const artifact: IArtifactSheet = {//Icebreaker
   name: "Blizzard Strayer", rarity: [4, 5],
-  pieces: {
-    flower: "Snowswept Memory",
-    plume: "Icebreaker's Resolve",
-    sands: "Frozen Homeland's Demise",
-    goblet: "Frost-Weaved Dignity",
-    circlet: "Broken Rime's Echo"
-  },
   icons: {
     flower,
     plume,
@@ -39,12 +32,12 @@ const artifact: IArtifactSheet = {//Icebreaker
   conditionals,
   setEffects: {
     2: {
-      text: <span><span className="text-cryo">Cryo DMG Bonus</span> +15%</span>,
       stats: { cryo_dmg_: 15 }
     },
     4: {
-      text: <span>When a character attacks an enemy affected by <span className="text-cryo">Cryo</span>, their CRIT Rate is increased by 20%. If the enemy is Frozen, CRIT Rate is increased by an additional 20%</span>,
-      conditional: conditionals.set4
+      document: [{
+        conditional: conditionals[4]
+      }]
     }
   }
 }

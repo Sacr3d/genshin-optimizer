@@ -15,7 +15,7 @@ type SkillDisplayCardProps = {
 export default function DocumentDisplay({ sections, characterDispatch, equippedBuild, newBuild, editable }: SkillDisplayCardProps) {
   const build = newBuild ? newBuild : equippedBuild
   if (!build) return null
-  return <div>{sections?.map((section, i) => {
+  return <div className="w-100">{sections?.map((section, i) => {
     if (!section.canShow!(build)) return null
     const talentText = evalIfFunc(section.text, build)
     const fields = section.fields ?? []

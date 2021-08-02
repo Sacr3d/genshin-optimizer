@@ -7,13 +7,6 @@ import { IArtifactSheet } from '../../../Types/artifact'
 
 const artifact: IArtifactSheet = {
   name: "Wanderer's Troupe", rarity: [4, 5],
-  pieces: {
-    flower: "Troupe's Dawnlight",
-    plume: "Bard's Arrow Feather",
-    sands: "Concert's Final Hour",
-    goblet: "Wanderer's String-Kettle",
-    circlet: "Conductor's Top Hat"
-  },
   icons: {
     flower,
     plume,
@@ -23,13 +16,11 @@ const artifact: IArtifactSheet = {
   },
   setEffects: {
     2: {
-      text: "Elemental Mastery +80",
       stats: {
         eleMas: 80
       }
     },
     4: {
-      text: "Increases Charged Attack DMG by 35% if the character uses a Catalyst or Bow.",
       stats: stats => (stats.weaponType === "catalyst" || stats.weaponType === "bow") ? { charged_dmg_: 35 } : {}
     }
   }

@@ -6,12 +6,14 @@ import circlet from './Item_Ornate_Kabuto.png'
 import { IConditionals } from '../../../Types/IConditional'
 import { IArtifactSheet } from '../../../Types/artifact'
 import { FormulaPathBase } from '../../formula'
+import formula from './data'
 import { KeyPath } from '../../../Util/KeyPathUtil'
+import Stat from '../../../Stat'
 
 const path = KeyPath<FormulaPathBase>().artifact.EmblemOfSeveredFate
 
 const conditionals: IConditionals = {
-  set4: {
+  4: {
     name: "Elemental Skill hits an opponent",
     states: {
       s1: {
@@ -35,13 +37,6 @@ const conditionals: IConditionals = {
 }
 const artifact: IArtifactSheet = {
   name: "Emblem of Severed Fate", rarity: [4, 5],
-  pieces: {
-    flower: "Magnificent Tsuba",
-    plume: "Sundered Feather",
-    sands: "Storm Cage",
-    goblet: "Scarlet Vessel",
-    circlet: "Ornate Kabuto"
-  },
   icons: {
     flower,
     plume,
@@ -52,14 +47,21 @@ const artifact: IArtifactSheet = {
   conditionals,
   setEffects: {
     2: {
-      text: "Energy Recharge +20%",
       stats: { enerRech_: 20 }
     },
     4: {
-      text: <span>Increases Elemental Burst DMG by 25% of Energy Recharge. A maximum of 75% bonus DMG can be obtained in this way.</span>,
       stats: {
         modifiers: { burst_dmg_: [path.s4()] },
-      }
+      },
+      document: [{
+        fields: [{
+          text: "Elemental Burst DMG",
+          formulaText: stats => <span>25% {Stat.printStat("enerRech_", stats)}</span>,
+          formula: formula.s4,
+          fixed: 1,
+          unit: "%"
+        }]
+      }]
     }
   }
 }

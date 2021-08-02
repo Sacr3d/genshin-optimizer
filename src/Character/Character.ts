@@ -80,8 +80,7 @@ export default class Character {
     //setEffects
     mergeStats(stats, artifactSetEffectsStats)
     //setEffects conditionals
-    Conditional.parseConditionalValues({ artifact: stats?.conditionalValues?.artifact }, (conditional, conditionalValue, [, setKey]) => {
-      const { setNumKey } = conditional
+    Conditional.parseConditionalValues({ artifact: stats?.conditionalValues?.artifact }, (conditional, conditionalValue, [, setKey, setNumKey]) => {
       if (parseInt(setNumKey) > (setToSlots?.[setKey]?.length ?? 0)) return
       const { stats: condStats } = Conditional.resolve(conditional, stats, conditionalValue)
       mergeStats(stats, condStats)

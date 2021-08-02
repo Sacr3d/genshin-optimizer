@@ -34,7 +34,13 @@ const conditionals: IConditionals = {
       modifiers: { finalATK: [path.burst.bonus()] },
       infusionSelf: "geo",
     },
-    fields: [{ text: noelle("qlarger") }]
+    fields: [{
+      text: noelle("qlarger")
+    }, {
+      text: tr("burst.atkBonus"),
+      formulaText: stats => <span>{data.burst.bonus[stats.tlvl.burst]}% {stats.constellation >= 6 ? "+50% " : ""}{Stat.printStat("finalDEF", stats)}</span>,
+      formula: formula.burst.bonus,
+    },]
   }
 }
 const char: ICharacterSheet = {
@@ -109,10 +115,6 @@ const char: ICharacterSheet = {
             formulaText: stats => <span>{data.burst.skill_dmg[stats.tlvl.burst]}% {Stat.printStat(getTalentStatKey("burst", stats), stats)}</span>,
             formula: formula.burst.skill_dmg,
             variant: stats => getTalentStatKeyVariant("burst", stats),
-          }, {
-            text: tr("burst.atkBonus"),
-            formulaText: stats => <span>{data.burst.bonus[stats.tlvl.burst]}% {stats.constellation >= 6 ? "+50% " : ""}{Stat.printStat("finalDEF", stats)}</span>,
-            formula: formula.burst.bonus,
           }, {
             text: sgt("duration"),
             value: stats => stats.constellation >= 6 ? noelle("c6duration") : "15s",

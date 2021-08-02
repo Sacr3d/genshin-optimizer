@@ -32,6 +32,11 @@ const conditionals: IConditionals = {
       modifiers: { finalATK: [path.skill.atk_inc()] },
       infusionSelf: "pyro",
     },
+    fields: [{
+      text: "ATK Increase",
+      formulaText: stats => <span>min( {data.skill.atk_inc[stats.tlvl.skill]}% {Stat.printStat("finalHP", stats)}, 400% {Stat.printStat("baseATK", stats)} )</span>,
+      formula: formula.skill.atk_inc,
+    },]
   },
   a4: { // SanguineRouge
     canShow: stats => stats.ascension >= 4,
@@ -107,11 +112,6 @@ const char: ICharacterSheet = {
           fields: [{
             text: "Activation Cost",
             value: "30% Current HP",
-          }, {
-            // TODO Add 400% baseATK CAP text
-            text: "ATK Increase",
-            formulaText: stats => <span>{data.skill.atk_inc[stats.tlvl.skill]}% {Stat.printStat("finalHP", stats)}</span>,
-            formula: formula.skill.atk_inc,
           }, {
             canShow: stats => stats.constellation < 2,
             text: "Blood Blossom DMG",

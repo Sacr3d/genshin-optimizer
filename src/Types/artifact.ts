@@ -1,23 +1,19 @@
 import { ArtifactSetKey, CharacterKey, ElementKey, Rarity, SetNum, SlotKey } from "./consts";
 import { BonusStats, BasicStats } from "./stats";
-import IConditional, { IConditionalComplex, IConditionals } from "./IConditional";
+import { IConditionals } from "./IConditional";
 import { DocumentSection } from "./character";
 
 export type IArtifactSheets = StrictDict<ArtifactSetKey, IArtifactSheet>
 
 export interface IArtifactSheet {
-  name: string,
+  name: string,//only to stored the endlish name for OCR, otherwise, should come from localization pipeline
   rarity: readonly Rarity[],
-  pieces: Dict<SlotKey, string>,
   icons: Dict<SlotKey, string>,
   conditionals?: IConditionals,
   setEffects: Dict<SetNum, SetEffectEntry>
 }
 export interface SetEffectEntry {
-  text: (Displayable | ((stats: BasicStats) => Displayable)),
   stats?: BonusStats | ((stats: BasicStats) => BonusStats)
-  conditional?: (IConditional | IConditionalComplex),
-  conditionals?: IConditionals,
   document?: DocumentSection[],
 }
 
@@ -60,7 +56,7 @@ export const allMainStatKeys = ["hp", "hp_", "atk", "atk_", "def_", "eleMas", "e
 export const allSubstats = ["hp", "hp_", "atk", "atk_", "def_", "def", "eleMas", "enerRech_", "critRate_", "critDMG_",] as const
 
 // TODO: Check if these actually applies
-type SpecializedStatKey = "normal_critRate_" | "charged_critRate_" | "plunging_dmg_" | "powShield_" | "enemyDEFRed_" | "skillCDRed_" | "incHeal_" | "weakspotDMG_" | "dmg_" | "moveSPD_" | "staminaDec_" | "atkSPD_" | "cdRed_"
+type SpecializedStatKey = "normal_critRate_" | "charged_critRate_" | "plunging_dmg_" | "powShield_" | "enemyDEFRed_" | "skillCDRed_" | "incHeal_" | "weakspotDMG_" | "dmg_" | "moveSPD_" | "staminaDec_" | "atkSPD_" | "cdRed_" | "finalHP" | "finalATK" | "finalDEF"
 
 export type MainStatKey = typeof allMainStatKeys[number]
 export type SubstatKey = typeof allSubstats[number]

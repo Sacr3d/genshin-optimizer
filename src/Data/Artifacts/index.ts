@@ -34,7 +34,8 @@ import TravelingDoctor from './TravelingDoctor'
 import ViridescentVenerer from './ViridescentVenerer'
 import WanderersTroupe from './WanderersTroupe'
 import { IArtifactSheets } from '../../Types/artifact'
-let artifacts: IArtifactSheets = {
+import { documentSectionsProcessing } from '../../Util/DocumentUtil'
+const artifacts: IArtifactSheets = {
   Adventurer,
   ArchaicPetra,
   Berserker,
@@ -70,5 +71,11 @@ let artifacts: IArtifactSheets = {
   TravelingDoctor,
   ViridescentVenerer,
   WanderersTroupe,
-}
+} as const
+
+
+Object.values(artifacts).forEach(art =>
+  Object.values(art.setEffects).forEach(setEffect => {
+    setEffect.document && documentSectionsProcessing(setEffect.document)
+  }))
 export default artifacts

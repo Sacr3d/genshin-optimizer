@@ -3,17 +3,24 @@ import plume from './Item_Traveling_Doctor\'s_Owl_Feather.png'
 import sands from './Item_Traveling_Doctor\'s_Pocket_Watch.png'
 import goblet from './Item_Traveling_Doctor\'s_Medicine_Pot.png'
 import circlet from './Item_Traveling_Doctor\'s_Handkerchief.png'
-import DisplayPercent from '../../../Components/DisplayPercent'
 import { IArtifactSheet } from '../../../Types/artifact'
+import { IConditionals } from '../../../Types/IConditional'
+import { TransWrapper } from '../../../Components/Translate'
+import formula from './data'
+import Stat from '../../../Stat'
+const conditionals: IConditionals = {
+  4: {
+    name: <span>Using Elemental Burst</span>,
+    fields: [{
+      text: <TransWrapper ns="sheet_gen" key18="healing" />,
+      formulaText: stats => <span>20% {Stat.printStat("finalHP", stats)} * {Stat.printStat("heal_multi", stats)}</span>,
+      formula: formula.regen,
+      variant: "success"
+    }]
+  }
+}
 const artifact: IArtifactSheet = {
   name: "Traveling Doctor", rarity: [3],
-  pieces: {
-    flower: "Traveling Doctor's Silver Lotus",
-    plume: "Traveling Doctor's Owl Feather",
-    sands: "Traveling Doctor's Pocket Watch",
-    goblet: "Traveling Doctor's Medicine Pot",
-    circlet: "Traveling Doctor's Handkerchief Crown"
-  },
   icons: {
     flower,
     plume,
@@ -21,13 +28,15 @@ const artifact: IArtifactSheet = {
     goblet,
     circlet
   },
+  conditionals,
   setEffects: {
     2: {
-      text: "Increases incoming healing by 20%.",
       stats: { incHeal_: 20 }
     },
     4: {
-      text: stats => <span>Using Elemental Burst restores 20% HP{DisplayPercent(20, stats, "finalHP")}.</span>,
+      document: [{
+        conditional: conditionals[4]
+      }]
     }
   }
 }

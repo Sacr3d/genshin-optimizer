@@ -47,17 +47,6 @@ export class ArtifactSheet {
   setEffectDesc = (setNum: SetNum): Displayable => tr(this.key, `setEffects.${setNum}`)
   setEffectDocument = (setNum: SetNum) => this.data.setEffects[setNum]?.document
 
-  setEffectConditionals(setNum: SetNum, stats: ICalculatedStats) {
-    const effects = this.setEffects[setNum]
-    if (effects?.conditional || effects?.conditionals) {
-      return {
-        ...effects?.conditional && { default: effects?.conditional },
-        ...effects?.conditionals && effects?.conditionals
-      }
-    }
-    return undefined
-  }
-
   static getAll() { return artifactImport }
   static get(set: ArtifactSetKey | undefined): Promise<ArtifactSheet> | undefined { return set && promiseSheets[set] }
 

@@ -1,5 +1,4 @@
 import { Badge, Card, ListGroup } from "react-bootstrap"
-import ConditionalDisplay from "../../Components/ConditionalDisplay"
 import DocumentDisplay from "../../Components/DocumentDisplay"
 import FieldDisplay from "../../Components/FieldDisplay"
 import { ArtifactSetKey, SetNum } from "../../Types/consts"
@@ -25,7 +24,6 @@ export default function SetEffectDisplay({ setKey, setNumKey, equippedBuild, new
   const setEffectText = sheet.setEffectDesc(setNumKey)
   const setStats = sheet.setNumStats(setNumKey, stats)
   const setStatsFields = statsToFields(setStats, stats)
-  const conditionals = sheet.setEffectConditionals(setNumKey, stats)
   const document = sheet.setEffectDocument(setNumKey)
   return <>
     <Card bg="darkcontent" text={"lightfont" as any} className="mb-2 w-100" >
@@ -36,8 +34,6 @@ export default function SetEffectDisplay({ setKey, setNumKey, equippedBuild, new
         {setStatsFields.map((field, i) => <FieldDisplay key={i} index={i} {...{ field, equippedBuild, newBuild }} />)}
       </ListGroup>
     </Card>
-    {/* TODO: remove conditionals display here in lieu of document once sheets are converted*/}
-    {!Boolean(document) && Boolean(conditionals) && Object.entries(conditionals!).map(([ckey, conditional]) => <ConditionalDisplay key={ckey as any} {...{ conditional, equippedBuild, newBuild, characterDispatch, editable }} />)}
     {document ? <DocumentDisplay {...{ sections: document, equippedBuild, newBuild, characterDispatch, editable }} /> : null}
   </>
 }

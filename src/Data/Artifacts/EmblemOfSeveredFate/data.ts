@@ -1,6 +1,6 @@
-import { FormulaItem } from "../../../Types/character"
+import { ISubFormula } from "../../../Types/character"
 
-const formula = {
-  s4: stats => [s => Math.min(s.enerRech_ * 0.25, 3), ["enerRech_"]] as FormulaItem
+const formula: ISubFormula = {
+  s4: stats => [s => Math.min(s.enerRech_, 300) * 0.25, ["enerRech_"]]
 }
 export default formula

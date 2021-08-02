@@ -7,14 +7,7 @@ import { IArtifactSheet } from '../../../Types/artifact'
 
 const artifact: IArtifactSheet = {
   name: "Gladiator's Finale", rarity: [4, 5],
-  pieces: {
-    flower: "Gladiator's Nostalgia",
-    plume: "Gladiator's Destiny",
-    sands: "Gladiator's Longing",
-    goblet: "Gladiator's Intoxication",
-    circlet: "Gladiator's Triumphus"
-  },
-  icons: {
+    icons: {
     flower,
     plume,
     sands,
@@ -23,12 +16,10 @@ const artifact: IArtifactSheet = {
   },
   setEffects: {
     2: {
-      text: "ATK +18%",
-      stats: { atk_: 18 }
+            stats: { atk_: 18 }
     },
     4: {
-      text: "If the wielder of this artifact set uses a Sword, Claymore or Polearm, increases their Normal Attack DMG by 35%.",
-      stats: stats => (stats.weaponType === "sword" || stats.weaponType === "polearm" || stats.weaponType === "claymore") ? { normal_dmg_: 35 } : {}
+            stats: stats => (stats.weaponType === "sword" || stats.weaponType === "polearm" || stats.weaponType === "claymore") ? { normal_dmg_: 35 } : {}
     }
   }
 }

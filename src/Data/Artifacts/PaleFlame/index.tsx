@@ -7,7 +7,7 @@ import { IConditionals } from '../../../Types/IConditional'
 import { IArtifactSheet } from '../../../Types/artifact'
 
 const conditionals: IConditionals = {
-  set4: {
+  4: {
     name: "Elemental Skill hits an opponent",
     states: {
       s1: {
@@ -31,13 +31,6 @@ const conditionals: IConditionals = {
 }
 const artifact: IArtifactSheet = {
   name: "Pale Flame", rarity: [4, 5],
-  pieces: {
-    flower: "Stainless Bloom",
-    plume: "Wise Doctor's Pinion",
-    sands: "Moment of Cessation",
-    goblet: "Surpassing Cup",
-    circlet: "Mocking Mask"
-  },
   icons: {
     flower,
     plume,
@@ -48,12 +41,12 @@ const artifact: IArtifactSheet = {
   conditionals,
   setEffects: {
     2: {
-      text: "Physical DMG +25%",
       stats: { physical_dmg_: 25 }
     },
     4: {
-      text: "When an Elemental Skill hits an opponent, ATK is increased by 9% for 7s. This effect stacks up to 2 times and can be triggered once every 0.3s. Once 2 stacks are reached, the 2-set effect is increased by 100%.",
-      conditional: conditionals.set4
+      document: [{
+        conditional: conditionals[4]
+      }]
     }
   }
 }

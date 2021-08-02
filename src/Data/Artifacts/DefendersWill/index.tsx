@@ -33,13 +33,6 @@ const conditionals: IConditionals = {
 }
 const artifact: IArtifactSheet = {
   name: "Defender's Will", rarity: [3, 4],
-  pieces: {
-    flower: "Guardian's Flower",
-    plume: "Guardian's Sigil",
-    sands: "Guardian's Clock",
-    goblet: "Guardian's Vessel",
-    circlet: "Guardian's Band"
-  },
   icons: {
     flower,
     plume,
@@ -50,12 +43,22 @@ const artifact: IArtifactSheet = {
   conditionals,
   setEffects: {
     2: {
-      text: "Base DEF +30%",
       stats: { def_: 30 }
     },
     4: {
-      text: "Increases Elemental RES by 30% for each element present in the party.",
-      conditionals
+      document: [{
+        conditional: conditionals.anemo
+      }, {
+        conditional: conditionals.geo
+      }, {
+        conditional: conditionals.electro
+      }, {
+        conditional: conditionals.hydro
+      }, {
+        conditional: conditionals.pyro
+      }, {
+        conditional: conditionals.cryo
+      }]
     }
   }
 }

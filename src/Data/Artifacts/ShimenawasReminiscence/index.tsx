@@ -7,7 +7,7 @@ import { IConditionals } from '../../../Types/IConditional'
 import { IArtifactSheet } from '../../../Types/artifact'
 
 const conditionals: IConditionals = {
-  set4: {
+  4: {
     name: "After using 15 energy",
     stats: {
       normal_dmg_: 50,
@@ -18,13 +18,6 @@ const conditionals: IConditionals = {
 }
 const artifact: IArtifactSheet = {
   name: "Shimenawa's Reminiscence", rarity: [4, 5],
-  pieces: {
-    flower: "Entangling Bloom",
-    plume: "Shaft of Remembrance",
-    sands: "Morning Dew's Moment",
-    goblet: "Hopeful Heart",
-    circlet: "Capricious Visage"
-  },
   icons: {
     flower,
     plume,
@@ -35,12 +28,12 @@ const artifact: IArtifactSheet = {
   conditionals,
   setEffects: {
     2: {
-      text: "ATK +18%.",
       stats: { atk_: 18 }
     },
     4: {
-      text: "When casting an Elemental Skill, if the character has 15 or more Energy, they lose 15 Energy and Normal/Charged/ Plunging Attack DMG is increased by 50% for 10s.",
-      conditional: conditionals.set4
+      document: [{
+        conditional: conditionals[4]
+      }]
     }
   }
 }

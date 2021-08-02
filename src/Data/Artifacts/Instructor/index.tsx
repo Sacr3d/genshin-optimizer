@@ -6,20 +6,13 @@ import circlet from './Item_Instructor\'s_Cap.png'
 import { IArtifactSheet } from '../../../Types/artifact'
 import { IConditionals } from '../../../Types/IConditional'
 const conditionals: IConditionals = {
-  set4: {
+  4: {
     name: "After using Elemental Skill",
     stats: { eleMas: 120 }//TODO: party buff
   }
 }
 const artifact: IArtifactSheet = {
   name: "Instructor", rarity: [3, 4],
-  pieces: {
-    flower: "Instructor's Brooch",
-    plume: "Instructor's Feathered Accessory",
-    sands: "Instructor's Pocket Watch",
-    goblet: "Instructor's Tea Cup",
-    circlet: "Instructor's Cap"
-  },
   icons: {
     flower,
     plume,
@@ -30,12 +23,12 @@ const artifact: IArtifactSheet = {
   conditionals,
   setEffects: {
     2: {
-      text: "Increases Elemental Mastery by 80.",
       stats: { eleMas: 80 }
     },
     4: {
-      text: "After using Elemental Skill, increases all party members' Elemental Mastery by 120 for 8s.",
-      conditional: conditionals.set4
+      document: [{
+        conditional: conditionals[4]
+      }]
     }
   }
 }

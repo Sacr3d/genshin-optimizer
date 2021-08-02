@@ -6,7 +6,7 @@ import circlet from './Item_Tiny_Miracle\'s_Earrings.png'
 import { IArtifactSheet } from '../../../Types/artifact'
 import { IConditionals } from '../../../Types/IConditional'
 const conditionals: IConditionals = {
-  set4: {
+  4: {
     name: "Incoming DMG",
     states: {
       anemo: {
@@ -43,13 +43,6 @@ const conditionals: IConditionals = {
 }
 const artifact: IArtifactSheet = {
   name: "Tiny Miracle", rarity: [3, 4],
-  pieces: {
-    flower: "Tiny Miracle's Flower",
-    plume: "Tiny Miracle's Feather",
-    sands: "Tiny Miracle's Hourglass",
-    goblet: "Tiny Miracle's Goblet",
-    circlet: "Tiny Miracle's Earrings"
-  },
   icons: {
     flower,
     plume,
@@ -60,7 +53,6 @@ const artifact: IArtifactSheet = {
   conditionals,
   setEffects: {
     2: {
-      text: "All Elemental RES increased by 20%",
       stats: {
         anemo_res_: 20,
         geo_res_: 20,
@@ -71,8 +63,9 @@ const artifact: IArtifactSheet = {
       }
     },
     4: {
-      text: "Incoming elemental DMG increases corresponding Elemental RES by 30% for 10s. Can only occur once every 10s.",
-      conditional: conditionals.set4
+      document: [{
+        conditional: conditionals[4]
+      }]
     }
   }
 }
