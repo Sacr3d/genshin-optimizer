@@ -33,7 +33,7 @@ const conditionals: IConditionals = {
     },
     fields: [{
       text: "ATK Bonus Ratio",
-      formulaText: stats => <span>{stats.constellation < 1 ? data.burst.atkRatio[stats.tlvl.burst] : `(${data.burst.atkRatio[stats.tlvl.burst]} + 20)`}% {Stat.printStat("baseATK", stats)}</span>,
+      formulaText: stats => <span>{stats.constellation < 1 ? data.burst.atkRatio[stats.tlvl.burst] : `(${data.burst.atkRatio[stats.tlvl.burst]} + 20)`}% {Stat.printStat("baseATK", stats, true)}</span>,
       formula: formula.burst.atkBonus
     },]
   },

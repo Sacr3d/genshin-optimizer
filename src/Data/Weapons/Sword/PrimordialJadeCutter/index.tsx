@@ -19,7 +19,7 @@ const weapon: IWeaponSheet = {
   document: [{
     fields: [{
       text: "ATK Increase",
-      formulaText: stats => <span>{data.hp_atk[stats.weapon.refineIndex]}% {Stat.printStat("finalHP", stats)}</span>,
+      formulaText: stats => <span>{data.hp_atk[stats.weapon.refineIndex]}% {Stat.printStat("finalHP", stats, true)}</span>,
       formula: formula.bonus,
     }]
   }]

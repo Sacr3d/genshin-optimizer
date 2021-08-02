@@ -38,7 +38,7 @@ const conditionals: IConditionals = {
       text: noelle("qlarger")
     }, {
       text: tr("burst.atkBonus"),
-      formulaText: stats => <span>{data.burst.bonus[stats.tlvl.burst]}% {stats.constellation >= 6 ? "+50% " : ""}{Stat.printStat("finalDEF", stats)}</span>,
+      formulaText: stats => <span>{data.burst.bonus[stats.tlvl.burst]}% {stats.constellation >= 6 ? "+50% " : ""}{Stat.printStat("finalDEF", stats, true)}</span>,
       formula: formula.burst.bonus,
     },]
   }

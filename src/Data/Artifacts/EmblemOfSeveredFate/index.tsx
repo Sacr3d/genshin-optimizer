@@ -56,7 +56,7 @@ const artifact: IArtifactSheet = {
       document: [{
         fields: [{
           text: "Elemental Burst DMG",
-          formulaText: stats => <span>25% {Stat.printStat("enerRech_", stats)}</span>,
+          formulaText: stats => <span>25% {Stat.printStat("enerRech_", stats, true)}</span>,
           formula: formula.s4,
           fixed: 1,
           unit: "%"

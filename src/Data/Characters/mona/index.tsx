@@ -175,7 +175,7 @@ const char: ICharacterSheet = {
           text: tr("passive2.description"),
           fields: [{
             text: "Hydro DMG Bonus",
-            formulaText: stats => <span>20% {Stat.printStat("enerRech_", stats)}</span>,
+            formulaText: stats => <span>20% {Stat.printStat("enerRech_", stats, true)}</span>,
             formula: formula.passive2.bonus,
             fixed: 1,
             unit: "%"

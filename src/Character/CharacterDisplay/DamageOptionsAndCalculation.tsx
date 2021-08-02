@@ -5,7 +5,7 @@ import { Accordion, AccordionContext, Button, Card, Col, Dropdown, Image, Row, T
 import { useAccordionToggle } from 'react-bootstrap/AccordionToggle';
 import Assets from "../../Assets/Assets";
 import Formula from "../../Formula";
-import Stat from "../../Stat";
+import Stat, { FormulaDisplay } from "../../Stat";
 import { GetDependencies } from "../../StatDependency";
 import { ICharacter } from "../../Types/character";
 import { allElements } from "../../Types/consts";
@@ -94,7 +94,7 @@ function CalculationDisplay({ characterSheet, weaponSheet, build }: { characterS
                     <Card.Body className="p-2">
                       <div className="mb-n2">
                         {subFormulaKeys.map(subKey =>
-                          <p className="mb-2" key={subKey}>{Stat.printStat(subKey, build)} = <small>{Stat.printFormula(subKey, build, build.modifiers, false)}</small></p>
+                          <p className="mb-2" key={subKey}>{Stat.printStat(subKey, build)} = <small><FormulaDisplay statKey={subKey} stats={build} modifiers={build.modifiers} expand={false} /></small></p>
                         )}
                       </div>
                     </Card.Body>
@@ -116,20 +116,22 @@ function FormulaCalculationField({ fieldKeys, build, fieldIndex }: { fieldKeys: 
   const fieldText = Character.getTalentFieldValue(formulaField, "text", build)
   const fieldVariant = Character.getTalentFieldValue(formulaField, "variant", build)
   const fieldFormulaText = Character.getTalentFieldValue(formulaField, "formulaText", build)
+  const fieldFixed = Character.getTalentFieldValue(formulaField, "fixed", build) ?? 0
+  const fieldUnit = Character.getTalentFieldValue(formulaField, "unit", build) ?? ""
   const [fieldFormula, fieldFormulaDependency] = Character.getTalentFieldValue(formulaField, "formula", build, [] as any)
   if (!fieldFormula || !fieldFormulaDependency) return null
-  const fieldValue = fieldFormula?.(build)?.toFixed?.()
+  const fieldValue = fieldFormula?.(build)?.toFixed?.(fieldFixed)
   const subFormulaKeys = Stat.getPrintableFormulaStatKeyList(GetDependencies(build, build?.modifiers, fieldFormulaDependency), build?.modifiers).reverse()
   return <Card bg="lightcontent" text={"lightfont" as any} className="mb-2">
     <Accordion.Toggle as={Card.Header} className="p-2 cursor-pointer" variant="link" eventKey={`field${fieldIndex}`}>
-      <b className={`text-${fieldVariant}`}>{fieldText}</b> <span className="text-info">{fieldValue}</span>
+      <b className={`text-${fieldVariant}`}>{fieldText}</b> <span className="text-info">{fieldValue}{fieldUnit}</span>
     </Accordion.Toggle>
     <Accordion.Collapse eventKey={`field${fieldIndex}`}>
       <Card.Body className="p-2">
         <div className="mb-n2">
           <p className="mb-2"><b className={`text-${fieldVariant}`}>{fieldText}</b> <span className="text-info">{fieldValue}</span> = <small>{fieldFormulaText}</small></p>
           {subFormulaKeys.map(subKey =>
-            <p className="mb-2" key={subKey}>{Stat.printStat(subKey, build)} = <small>{Stat.printFormula(subKey, build, build.modifiers, false)}</small></p>
+            <p className="mb-2" key={subKey}>{Stat.printStat(subKey, build)} = <small><FormulaDisplay statKey={subKey} stats={build} modifiers={build.modifiers} expand={false} /></small></p>
           )}
         </div>
       </Card.Body>

@@ -74,7 +74,7 @@ const conditionals: IConditionals = {
       stats: { modifiers: { [`${eleKey}_dmg_`]: [path.passive2.bonus()] } },//TODO: party buff modifier
       fields: [{
         text: <TransWrapper ns="char_kaedeharakazuha" key18="a4.bonus" />,
-        formulaText: stats => <span>0.04% {Stat.printStat("eleMas", stats)}</span>,
+        formulaText: stats => <span>0.04% {Stat.printStat("eleMas", stats, true)}</span>,
         formula: formula.passive2.bonus,
         fixed: 1,
         unit: "%"
@@ -102,7 +102,7 @@ const conditionals: IConditionals = {
     },
     fields: [{
       text: <TransWrapper ns="char_kaedeharakazuha" key18="c6.bonus" />,
-      formulaText: stats => <span>0.2% {Stat.printStat("eleMas", stats)}</span>,
+      formulaText: stats => <span>0.2% {Stat.printStat("eleMas", stats, true)}</span>,
       formula: formula.constellation6.bonus,
       fixed: 1,
       unit: "%"

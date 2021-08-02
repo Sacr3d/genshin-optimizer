@@ -34,7 +34,7 @@ const conditionals: IConditionals = {
     },
     fields: [{
       text: "ATK Increase",
-      formulaText: stats => <span>min( {data.skill.atk_inc[stats.tlvl.skill]}% {Stat.printStat("finalHP", stats)}, 400% {Stat.printStat("baseATK", stats)} )</span>,
+      formulaText: stats => <span>min( {data.skill.atk_inc[stats.tlvl.skill]}% {Stat.printStat("finalHP", stats, true)}, 400% {Stat.printStat("baseATK", stats, true)} )</span>,
       formula: formula.skill.atk_inc,
     },]
   },

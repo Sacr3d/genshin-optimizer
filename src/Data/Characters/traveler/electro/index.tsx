@@ -37,7 +37,7 @@ const conditionals: IConditionals = {
       text: tr("skill.enerRechInc"),
       formulaText: stats => {
         if (stats.ascension < 4) return <span>20%</span>;
-        return <span>20% + ( 10% * {Stat.printStat("enerRech_", stats)} )</span>
+        return <span>20% + ( 10% * {Stat.printStat("enerRech_", stats, true)} )</span>
       },
       formula: formula.skill.enerRechInc,
       unit: "%",
