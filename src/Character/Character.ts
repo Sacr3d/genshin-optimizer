@@ -69,7 +69,7 @@ export default class Character {
 
     let stats = deepClone(initialStats)
     //add artifact and artifactsets
-    Object.values(artifacts).forEach((art: any) => {
+    Object.values(artifacts).forEach(art => {
       if (!art) return
       //main stats
       stats[art.mainStatKey] = (stats[art.mainStatKey] || 0) + Artifact.mainStatValue(art.mainStatKey, art.numStars, Math.max(Math.min(stats.mainStatAssumptionLevel, art.numStars * 4), art.level))
@@ -84,12 +84,12 @@ export default class Character {
       const { setNumKey } = conditional
       if (parseInt(setNumKey) > (setToSlots?.[setKey]?.length ?? 0)) return
       const { stats: condStats } = Conditional.resolve(conditional, stats, conditionalValue)
-      Object.entries(condStats).forEach(([statKey, val]) => stats[statKey as any] = (stats[statKey] || 0) + val)
+      mergeStats(stats, condStats)
     })
 
     stats.equippedArtifacts = Object.fromEntries(Object.entries(artifacts).map(([key, val]: any) => [key, val?.id]))
     stats.setToSlots = setToSlots
-    let dependencies = GetDependencies(stats?.modifiers)
+    let dependencies = GetDependencies(stats, stats?.modifiers)
     const { initialStats: preprocessedStats, formula } = PreprocessFormulas(dependencies, stats)
     formula(preprocessedStats)
     return { ...stats, ...preprocessedStats }
@@ -140,7 +140,6 @@ export default class Character {
       mergeStats(initialStats, { [specialStatKey]: specializedStatVal })
     }
 
-
     //add stats from all talents
     characterSheet.getTalentStatsAll(initialStats as ICalculatedStats, initialStats.characterEle).forEach(s => mergeStats(initialStats, s))
 
@@ -183,7 +182,7 @@ export default class Character {
     const talentSheet = characterSheet.getTalent(eleKey)
     talentSheet && Object.entries(talentSheet.formula).forEach(([talentKey, formulas]) => {
       Object.values(formulas).forEach((formula: any) => {
-        if (!formula.field.canShow(stats)) return
+        if (!formula.field?.canShow(stats)) return // TODO: What do we do if `formula.field` is not defined
         if (talentKey === "normal" || talentKey === "charged" || talentKey === "plunging") talentKey = "auto"
         const formKey = `talentKey_${talentKey}`
         if (!charFormulas[formKey]) charFormulas[formKey] = []

@@ -22,6 +22,10 @@ import { Translate, TransWrapper } from '../../../Components/Translate'
 import { sgt, st, talentTemplate } from '../SheetUtil'
 import ElementalData from '../../ElementalData'
 import { absorbableEle } from '../dataUtil'
+import { KeyPath } from '../../../Util/KeyPathUtil'
+import { FormulaPathBase } from '../../formula'
+
+const path = KeyPath<FormulaPathBase, any>().character.kaedeharakazuha
 const tr = (strKey: string) => <Translate ns="char_kaedeharakazuha_gen" key18={strKey} />
 const conditionals: IConditionals = {
   q: { // Absorption
@@ -67,7 +71,7 @@ const conditionals: IConditionals = {
     name: <TransWrapper ns="char_kaedeharakazuha" key18="a4.name" />,
     states: Object.fromEntries(absorbableEle.map(eleKey => [eleKey, {
       name: <span className={`text-${eleKey}`}><b>{ElementalData[eleKey].name}</b></span>,
-      stats: { modifiers: { [`${eleKey}_dmg_`]: { eleMas: 0.04 } } },//TODO: party buff modifier
+      stats: { modifiers: { [`${eleKey}_dmg_`]: [path.passive2.bonus()] } },//TODO: party buff modifier
       fields: [{
         text: sgt("duration"),
         value: "8s",
@@ -84,9 +88,9 @@ const conditionals: IConditionals = {
     name: <TransWrapper ns="char_kaedeharakazuha" key18="c6" />,
     stats: {
       modifiers: {
-        normal_dmg_: { eleMas: 0.2 },
-        charged_dmg_: { eleMas: 0.2 },
-        plunging_dmg_: { eleMas: 0.2 }
+        normal_dmg_: [path.constellation6.bonus()],
+        charged_dmg_: [path.constellation6.bonus()],
+        plunging_dmg_: [path.constellation6.bonus()],
       },
       infusionSelf: "anemo",
     },

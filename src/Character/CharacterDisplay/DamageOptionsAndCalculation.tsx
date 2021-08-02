@@ -85,7 +85,7 @@ function CalculationDisplay({ characterSheet, weaponSheet, build }: { characterS
               if (Array.isArray(field))
                 return <FormulaCalculationField key={fieldIndex} fieldKeys={field} build={build} fieldIndex={fieldIndex} />
               else if (typeof field === "string") {//simple statKey field
-                const subFormulaKeys: any[] = Stat.getPrintableFormulaStatKeyList(GetDependencies(build?.modifiers, [field]), build?.modifiers).reverse()
+                const subFormulaKeys: any[] = Stat.getPrintableFormulaStatKeyList(GetDependencies(build, build?.modifiers, [field]), build?.modifiers).reverse()
                 return Boolean(subFormulaKeys.length) && <Card key={fieldIndex} bg="lightcontent" text={"lightfont" as any} className="mb-2">
                   <Accordion.Toggle as={Card.Header} className="p-2 cursor-pointer" variant="link" eventKey={`field${fieldIndex}`}>
                     {Stat.printStat(field, build)}
@@ -119,7 +119,7 @@ function FormulaCalculationField({ fieldKeys, build, fieldIndex }: { fieldKeys: 
   const [fieldFormula, fieldFormulaDependency] = Character.getTalentFieldValue(formulaField, "formula", build, [] as any)
   if (!fieldFormula || !fieldFormulaDependency) return null
   const fieldValue = fieldFormula?.(build)?.toFixed?.()
-  const subFormulaKeys = Stat.getPrintableFormulaStatKeyList(GetDependencies(build?.modifiers, fieldFormulaDependency), build?.modifiers).reverse()
+  const subFormulaKeys = Stat.getPrintableFormulaStatKeyList(GetDependencies(build, build?.modifiers, fieldFormulaDependency), build?.modifiers).reverse()
   return <Card bg="lightcontent" text={"lightfont" as any} className="mb-2">
     <Accordion.Toggle as={Card.Header} className="p-2 cursor-pointer" variant="link" eventKey={`field${fieldIndex}`}>
       <b className={`text-${fieldVariant}`}>{fieldText}</b> <span className="text-info">{fieldValue}</span>

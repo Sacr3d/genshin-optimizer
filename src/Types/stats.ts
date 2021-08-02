@@ -1,3 +1,4 @@
+import { FormulaPath } from "../Data/formula";
 import { StatKey } from "./artifact";
 import { ArtifactSetKey, ElementKey, HitModeKey, ReactionModeKey, SlotKey } from "./consts";
 
@@ -37,10 +38,11 @@ export interface BasicStats {
  * and preprocessing.
  */
 export type ICalculatedStats = BasicStats & Required<BonusStats> & {
+  premod: Partial<ICalculatedStats>
   equippedArtifacts?: StrictDict<SlotKey, string>
   setToSlots: Dict<ArtifactSetKey, SlotKey[]>
 } & {
-  [key: string]: number
+  [key: string]: any
 }
 
 /** Stats that can be increased from artifacts */
@@ -58,7 +60,5 @@ type ConditionalValues = {
 }
 
 export interface Modifier {
-  [key: string]: {
-    [key: string]: number
-  }
+  [key: string]: string[][]
 }

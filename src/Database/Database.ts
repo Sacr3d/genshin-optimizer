@@ -99,7 +99,7 @@ export class Database {
     this.saveChar(key, newChar)
   }
   /**
-   * **Caution** This does not update `location`, use `setLocation` instead
+   * **Caution** This does not update `location` and `lock`, use `setLocation` or `lockArtifact` instead
    */
   updateArt(value: IArtifact): string {
     const newArt = deepClone(value)
@@ -111,8 +111,10 @@ export class Database {
 
     if (oldArt) {
       newArt.location = oldArt.location
+      newArt.lock = oldArt.lock
     } else {
       newArt.location = ""
+      newArt.lock = false
     }
 
     this.saveArt(key, newArt)
