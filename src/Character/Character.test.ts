@@ -1,3 +1,4 @@
+import { ArtifactSheet } from "../Artifact/ArtifactSheet"
 import { database } from "../Database/Database"
 import { IArtifact } from "../Types/artifact"
 import { allSlotKeys, SlotKey } from "../Types/consts"
@@ -25,6 +26,7 @@ describe('Character.getDisplayStatKeys()', () => {
   beforeEach(() => database.updateChar({ characterKey, levelKey: "L60A", weapon: { key: "Whiteblind" } } as any))
   afterEach(() => localStorage.clear())
   test('should get statKeys for characters with finished talent page', async () => {
+    const artifactsheets = await ArtifactSheet.getAll()
     const character = database._getChar(characterKey)
     const characterSheet = await CharacterSheet.get(characterKey)
     expect(character).toBeTruthy()
@@ -32,9 +34,9 @@ describe('Character.getDisplayStatKeys()', () => {
     const weaponSheet = await WeaponSheet.get(character.weapon.key)
     expect(characterSheet).toBeInstanceOf(CharacterSheet)
     expect(weaponSheet).toBeInstanceOf(WeaponSheet)
-    if (!characterSheet || !weaponSheet) return
+    if (!characterSheet || !weaponSheet || !artifactsheets) return
     const initialStats = Character.createInitialStats(character, characterSheet, weaponSheet)
-    const keys = Character.getDisplayStatKeys(initialStats, characterSheet)
+    const keys = Character.getDisplayStatKeys(initialStats, { characterSheet, weaponSheet, artifactsheets })
     expect(keys).toHaveProperty("talentKey_auto")
   })
 })

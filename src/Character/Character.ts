@@ -4,7 +4,6 @@ import Conditional from "../Conditional/Conditional";
 import { ascensionMaxLevel, characterStatBase } from "../Data/CharacterData";
 import ElementalData from "../Data/ElementalData";
 import { database } from "../Database/Database";
-import Formula from "../Formula";
 import { ElementToReactionKeys, PreprocessFormulas } from "../StatData";
 import { GetDependencies } from "../StatDependency";
 import { IArtifact } from "../Types/artifact";
@@ -167,7 +166,7 @@ export default class Character {
     return initialStats as ICalculatedStats
   }
   //TODO: this needs weaponSheet/artifactsheets as a parameter.
-  static getDisplayStatKeys = (stats: ICalculatedStats, characterSheet: CharacterSheet) => {
+  static getDisplayStatKeys = (stats: ICalculatedStats, { characterSheet, weaponSheet, artifactSheets }: { characterSheet: CharacterSheet, weaponSheet: WeaponSheet, artifactSheets: StrictDict<ArtifactSetKey, ArtifactSheet> }) => {
     const eleKey = stats.characterEle
     const basicKeys = ["finalHP", "finalATK", "finalDEF", "eleMas", "critRate_", "critDMG_", "heal_", "enerRech_", `${eleKey}_dmg_`]
     const isAutoElemental = characterSheet.isAutoElemental
@@ -179,39 +178,37 @@ export default class Character {
     if (!transReactions.includes("shattered_hit") && weaponTypeKey === "claymore") transReactions.push("shattered_hit")
     const charFormulas = {}
     const talentSheet = characterSheet.getTalent(eleKey)
-    talentSheet && Object.entries(talentSheet.formula).forEach(([talentKey, formulas]) => {
-      Object.values(formulas).forEach((formula: any) => {
-        if (!formula.field?.canShow(stats)) return // TODO: What do we do if `formula.field` is not defined
-        if (talentKey === "normal" || talentKey === "charged" || talentKey === "plunging") talentKey = "auto"
-        const formKey = `talentKey_${talentKey}`
-        if (!charFormulas[formKey]) charFormulas[formKey] = []
-        charFormulas[formKey].push(formula.keys)
+    const addFormula = (fields, key) => fields.forEach(field => {
+      if (!field.formula || !field?.canShow?.(stats)) return
+      if (!charFormulas[key]) charFormulas[key] = []
+      charFormulas[key].push((field.formula as any).keys)
+    })
+    const parseSection = (section, key) => {
+      //conditional
+      if (section.conditional && Conditional.canShow(section.conditional, stats)) {
+        const { fields }: { fields?: Array<IFieldDisplay> } = Conditional.resolve(section.conditional, stats, null)
+        fields && addFormula(fields, key)
+      }
+      //fields
+      if (section.fields) addFormula(section.fields, key)
+    }
+    talentSheet && Object.entries(talentSheet.sheets).forEach(([talentKey, { sections }]) => {
+      if (talentKey === "normal" || talentKey === "charged" || talentKey === "plunging") talentKey = "auto"
+      sections.forEach(section => parseSection(section, `talentKey_${talentKey}`))
+    })
+
+    const formKey = `weapon_${stats.weapon.key}`
+    weaponSheet.document && weaponSheet.document.map(section => parseSection(section, formKey))
+
+    stats.setToSlots && Object.entries(stats.setToSlots).map(([setKey, slots]) => [setKey, slots.length]).forEach(([setKey, num]) => {
+      const artifactSheet = artifactSheets[setKey] as ArtifactSheet
+      if (!artifactSheet) return
+      Object.entries(artifactSheet.setEffects).forEach(([setNum, { document }]) => {
+        if (num < parseInt(setNum)) return
+        document && document.map(section => parseSection(section, `artifact_${setKey}_${setNum}`))
       })
     })
 
-    const weaponFormulas = Formula.formulas?.weapon?.[stats.weapon.key]
-
-    if (weaponFormulas) {
-      Object.values(weaponFormulas as any).forEach((formula: any) => {
-        if (!formula.field.canShow(stats)) return
-        const formKey = `weapon_${stats.weapon.key}`
-        if (!charFormulas[formKey]) charFormulas[formKey] = []
-        charFormulas[formKey].push(formula.keys)
-      })
-    }
     return { basicKeys, ...charFormulas, transReactions }
-  }
-  static getDisplayHeading(key: string, characterSheet: CharacterSheet, weaponSheet: WeaponSheet, eleKey: ElementKey = "anemo") {
-    if (key === "basicKeys") return "Basic Stats"
-    else if (key === "genericAvgHit") return "Generic Optimization Values"
-    else if (key === "transReactions") return "Transformation Reaction"
-    else if (key.startsWith("talentKey_")) {
-      const subkey = key.split("talentKey_")[1]
-      return (characterSheet?.getTalentOfKey(subkey, eleKey)?.name ?? subkey)
-    } else if (key.startsWith("weapon_")) {
-      const subkey = key.split("weapon_")[1]
-      return (weaponSheet?.name ?? subkey)
-    }
-    return ""
   }
 }

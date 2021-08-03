@@ -8,7 +8,7 @@ import Formula from "../../Formula";
 import Stat, { FormulaDisplay } from "../../Stat";
 import { GetDependencies } from "../../StatDependency";
 import { ICharacter } from "../../Types/character";
-import { allElements } from "../../Types/consts";
+import { allElements, ArtifactSetKey } from "../../Types/consts";
 import { ICalculatedStats } from "../../Types/stats";
 import { IFieldDisplay } from "../../Types/IFieldDisplay";
 import { usePromise } from "../../Util/ReactUtil";
@@ -16,6 +16,8 @@ import WeaponSheet from "../../Weapon/WeaponSheet";
 import Character from "../Character";
 import CharacterSheet from "../CharacterSheet";
 import StatInput from "../StatInput";
+import { ArtifactSheet } from "../../Artifact/ArtifactSheet";
+import { getFormulaTargetsDisplayHeading } from "../CharacterUtil";
 const infusionVals = {
   "": <span>No External Infusion</span>,
   "pyro": <span >Pyro Infusion</span>,
@@ -71,12 +73,19 @@ export function HitModeToggle({ hitMode, characterDispatch, className }) {
   </ToggleButtonGroup>
 }
 
-function CalculationDisplay({ characterSheet, weaponSheet, build }: { characterSheet: CharacterSheet, weaponSheet: WeaponSheet, build: ICalculatedStats }) {
-  const displayStatKeys = useMemo(() => build && Character.getDisplayStatKeys(build, characterSheet), [build, characterSheet])
+function CalculationDisplay({ sheets, build }: {
+  sheets: {
+    characterSheet: CharacterSheet
+    weaponSheet: WeaponSheet,
+    artifactSheets: StrictDict<ArtifactSetKey, ArtifactSheet>
+  },
+  build: ICalculatedStats
+}) {
+  const displayStatKeys = useMemo(() => build && Character.getDisplayStatKeys(build, sheets), [build, sheets])
   if (!build) return null
   return <div>
     {Object.entries(displayStatKeys).map(([sectionKey, fields]: [string, any]) => {
-      const header = Character.getDisplayHeading(sectionKey, characterSheet, weaponSheet, build.characterEle)
+      const header = getFormulaTargetsDisplayHeading(sectionKey, sheets, build.characterEle)
       return <Card bg="darkcontent" text={"lightfont" as any} key={sectionKey} className="w-100 mb-2">
         <Card.Header>{header}</Card.Header>
         <Card.Body className="p-2">
@@ -155,15 +164,18 @@ const ContextAwareToggle = ({ eventKey, callback }) => {
 }
 
 type DamageOptionsAndCalculationProps = {
-  characterSheet: CharacterSheet
-  weaponSheet: WeaponSheet
+  sheets: {
+    characterSheet: CharacterSheet
+    weaponSheet: WeaponSheet,
+    artifactSheets: StrictDict<ArtifactSetKey, ArtifactSheet>
+  }
   character: ICharacter,
   characterDispatch: (any) => void,
   equippedBuild?: ICalculatedStats,
   newBuild?: ICalculatedStats,
   className: string
 }
-export default function DamageOptionsAndCalculation({ characterSheet, weaponSheet, character, character: { hitMode }, characterDispatch, newBuild, equippedBuild, className }: DamageOptionsAndCalculationProps) {
+export default function DamageOptionsAndCalculation({ sheets, sheets: { characterSheet, weaponSheet }, character, character: { hitMode }, characterDispatch, newBuild, equippedBuild, className }: DamageOptionsAndCalculationProps) {
   //choose which one to display stats for
   const build = newBuild ? newBuild : equippedBuild!
   return <div className={className}>
@@ -236,7 +248,7 @@ export default function DamageOptionsAndCalculation({ characterSheet, weaponShee
                 </Row>
               </Card.Body>
             </Card>
-            <CalculationDisplay characterSheet={characterSheet} weaponSheet={weaponSheet} build={build} />
+            <CalculationDisplay sheets={sheets} build={build} />
           </Card.Body>
         </Accordion.Collapse>
       </Card>
