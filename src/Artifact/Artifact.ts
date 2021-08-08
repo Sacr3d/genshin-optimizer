@@ -1,5 +1,4 @@
 import { ArtifactSlotsData, ArtifactStarsData } from '../Data/ArtifactData';
-import Stat from '../Stat';
 import { clampPercent, deepClone, evalIfFunc } from '../Util/Util';
 import { allSubstats, IArtifact, MainStatKey, SubstatKey } from '../Types/artifact';
 import { SlotKey, Rarity, ArtifactSetKey, allSlotKeys, SetNum, allRarities } from '../Types/consts';
