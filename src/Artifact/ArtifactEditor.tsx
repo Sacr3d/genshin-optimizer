@@ -152,7 +152,7 @@ export default function ArtifactEditor({ artifactIdToEdit, cancelEdit }: Artifac
                 </Dropdown.Item>)}
             </DropdownButton>
             <FormControl
-              value={artifact ? `${valueString(Artifact.mainStatValue(artifact.mainStatKey, numStars, level), Stat.getStatUnit(artifact.mainStatKey))}` : t`mainStat` as any}
+              value={artifact ? `${valueString(Artifact.mainStatValue(artifact.mainStatKey, numStars, level), Stat.getStatUnit(artifact.mainStatKey), { excludePercents: true })}` : t`mainStat` as any}
               disabled
               readOnly
             />
@@ -270,7 +270,7 @@ function SubstatInput({ index, artifact, setSubstat, className }: { index: numbe
       {rollNum ? t("editor.substat.RollCount", { count: rollNum }) : t`editor.substat.noRoll`}
     </Badge>
     const rollArr = rolls.map((val, i) =>
-      <span key={i} className={`mr-2 text-${rollOffset + rollData.indexOf(val)}roll`}>{valueString(val, unit)}</span>)
+      <span key={i} className={`mr-2 text-${rollOffset + rollData.indexOf(val)}roll`}>{valueString(val, unit, { excludePercents: true })}</span>)
 
     rollLabel = <Row>
       <Col>{rollBadge} {rollArr}</Col>
@@ -305,7 +305,7 @@ function SubstatInput({ index, artifact, setSubstat, className }: { index: numbe
       />
       {<ButtonGroup size="sm" as={InputGroup.Append}>
         {rollData.map((v, i) => {
-          const newValue = valueString(accurateValue + v, unit)
+          const newValue = valueString(accurateValue + v, unit, { excludePercents: true })
           return <Button key={i} variant={`${rollOffset + i}roll`} className="py-0 text-darkcontent" disabled={(value && !rollNum) || allowedRolls <= 0} onClick={() => setSubstat(index, { key, value: parseFloat(newValue) })}>{newValue}</Button>
         })}
       </ButtonGroup>}
