@@ -125,6 +125,15 @@ export default class Artifact {
       }
     })
 
+    {
+      // Check for duplicate substats
+      const substat = substats.find(({ key }, index) =>
+        substats.slice(index + 1).find(({ key: otherKey }) => key === otherKey))
+      if (substat) {
+        errors.push(`Dusplicated substat ${Stat.getStatNameWithPercent(substat.key)}`)
+      }
+    }
+
     if (errors.length) return errors
     {
       let substat = substats.find(substat => (substat.rolls?.length ?? 0) > 1)

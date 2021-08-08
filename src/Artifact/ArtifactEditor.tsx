@@ -241,7 +241,7 @@ export default function ArtifactEditor({ artifactIdToEdit, cancelEdit }: Artifac
 
 function SubstatInput({ index, artifact, setSubstat, className }: { index: number, artifact: IArtifact | undefined, setSubstat: (index: number, substat: Substat) => void, className: string }) {
   const { t } = useTranslation("artifact")
-  const { mainStatKey = "", substats = [] } = artifact ?? {}
+  const { mainStatKey = "" } = artifact ?? {}
   const { key = "", value = 0, rolls = [], efficiency = 0 } = artifact?.substats[index] ?? {}
 
   const accurateValue = rolls.reduce((a, b) => a + b, 0)
@@ -285,7 +285,7 @@ function SubstatInput({ index, artifact, setSubstat, className }: { index: numbe
       >
         {Boolean(key) && <Dropdown.Item key={key} onClick={() => setSubstat(index, { key: "", value: 0 })}>{t`editor.substat.noSubstat`}</Dropdown.Item>}
         {allSubstats
-          .filter(key => mainStatKey !== key && substats.every(other => other.key !== key))
+          .filter(key => mainStatKey !== key)
           .map(key =>
             <Dropdown.Item key={key} onClick={() => setSubstat(index, { key, value: 0 })} >
               {Stat.getStatNameWithPercent(key)}
@@ -321,7 +321,12 @@ export function artifactReducer(state: IArtifact | undefined, action: Message): 
     case "reset": return
     case "substat": {
       const { index, substat } = action
-      state!.substats[index] = substat
+      const oldIndex = substat.key ? state!.substats.findIndex(current => current.key === substat.key) : -1
+      if (oldIndex === -1 || oldIndex === index)
+        state!.substats[index] = substat
+      else  // Already in used, swap the items instead
+        [state!.substats[index], state!.substats[oldIndex]] =
+          [state!.substats[oldIndex], state!.substats[index]]
       return { ...state! }
     }
     case "overwrite": return action.artifact
