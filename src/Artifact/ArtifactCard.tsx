@@ -40,7 +40,6 @@ export default function ArtifactCard({ artifactId, artifactObj, onEdit, onDelete
   const art = artifactObj ?? databaseArtifact
   const characterSheet = usePromise(CharacterSheet.get(art?.location ?? ""), [art?.location])
   if (!art) return null
-  if (art.substats[0].rolls === undefined) Artifact.substatsValidation(art)
 
   const { id, slotKey, numStars, level, mainStatKey, substats, lock } = art
   const mainStatLevel = Math.max(Math.min(mainStatAssumptionLevel, numStars * 4), level)
